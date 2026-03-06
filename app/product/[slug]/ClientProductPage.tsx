@@ -1,0 +1,611 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { ShoppingCart, Check, Star, Info, ArrowLeft, Truck, RotateCcw, Shield } from "lucide-react"
+import { useCart } from "@/lib/cart-context"
+import { products } from "@/lib/products"
+import { ProductGallery } from "@/components/product-gallery"
+import { AddToCartButton } from "@/components/add-to-cart-button"
+import { ColorSelector } from "@/components/color-selector"
+import { StyleSelector } from "@/components/style-selector"
+import { LedStripCarousel } from "@/components/led-strip-carousel"
+import { ProductDescriptionSection } from "@/components/product-description-section"
+import { CustomerReviews } from "@/components/customer-reviews"
+import { ViewContentTracker } from "@/components/view-content-tracker"
+import { useScrollVisibility } from "@/hooks/use-scroll-visibility"
+import { PeopleViewing } from "@/components/people-viewing"
+import { ProductCard } from "@/components/product-card" // Added import for ProductCard
+import { RecessedLedSection } from "@/components/recessed-led-section"
+import { SamplesSection } from "@/components/samples-section"
+import { AcousticLineSection } from "@/components/acoustic-line-section"
+import { CountdownTimerFr } from "@/components/countdown-timer-fr"
+import { ExitIntentPopupFr } from "@/components/exit-intent-popup-fr"
+
+interface ClientProductPageProps {
+  product: any
+  relatedProducts: any[]
+  decorAndLightingProducts: any[]
+  frequentlyBoughtTogether: any[]
+  frequentlyBoughtTotal: number
+  orderBumpProducts: any[]
+  isFlexibleAcousticPanel: boolean
+  isRecessedLedStrip?: boolean
+  discountPercent: number
+  isFrenchVersion?: boolean
+}
+
+// French translations for UI text
+const frenchTranslations = {
+  backToProducts: "Retour aux produits",
+  inStock: "En stock",
+  outOfStock: "Rupture de stock",
+  limitedStock: "Stock limite - Commandez maintenant!",
+  selectColor: "Selectionnez la couleur",
+  selectStyle: "Selectionnez le style",
+  features: "Caracteristiques",
+  dimensions: "Dimensions",
+  material: "Materiau",
+  freeShipping: "Livraison gratuite",
+  freeShippingDesc: "Livraison gratuite sur toutes les commandes",
+  easyReturns: "Retours faciles",
+  easyReturnsDesc: "Retours sous 30 jours",
+  securePayment: "Paiement securise",
+  securePaymentDesc: "Vos informations sont protegees",
+  frequentlyBought: "Frequemment achetes ensemble",
+  addBothToCart: "Ajouter les deux au panier",
+  youMightLike: "Vous pourriez aussi aimer",
+  customerReviews: "Avis clients",
+  wasPrice: "etait",
+  save: "Economisez",
+  off: "de reduction",
+}
+
+const englishTranslations = {
+  backToProducts: "Back to products",
+  inStock: "In stock",
+  outOfStock: "Out of stock",
+  limitedStock: "Limited Stock - Order Now!",
+  selectColor: "Select Color",
+  selectStyle: "Select Style",
+  features: "Features",
+  dimensions: "Dimensions",
+  material: "Material",
+  freeShipping: "Free Shipping",
+  freeShippingDesc: "Free delivery on all orders",
+  easyReturns: "Easy Returns",
+  easyReturnsDesc: "30-day return policy",
+  securePayment: "Secure Payment",
+  securePaymentDesc: "Your information is protected",
+  frequentlyBought: "Frequently Bought Together",
+  addBothToCart: "Add Both to Cart",
+  youMightLike: "You Might Also Like",
+  customerReviews: "Customer Reviews",
+  wasPrice: "was",
+  save: "Save",
+  off: "off",
+}
+
+export default function ClientProductPage({
+  product,
+  relatedProducts,
+  decorAndLightingProducts,
+  frequentlyBoughtTogether,
+  frequentlyBoughtTotal,
+  orderBumpProducts,
+  isFlexibleAcousticPanel,
+  isRecessedLedStrip = false,
+  discountPercent,
+  isFrenchVersion = false,
+}: ClientProductPageProps) {
+  const t = isFrenchVersion ? frenchTranslations : englishTranslations
+  const { addItem, totalItems } = useCart()
+  const { opacity, isVisible } = useScrollVisibility()
+  const [showStickyFr, setShowStickyFr] = useState(false)
+
+  // FR sticky CTA: show when main CTA button scrolls out of view
+  useEffect(() => {
+    if (!isFrenchVersion) return
+    const handleScroll = () => {
+      const btn = document.querySelector("[data-add-to-cart]") as HTMLElement | null
+      if (btn) {
+        const rect = btn.getBoundingClientRect()
+        setShowStickyFr(rect.bottom < 0)
+      }
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [isFrenchVersion])
+
+  const handleAddBothToCart = () => {
+    frequentlyBoughtTogether.forEach((bundleProduct) => {
+      addItem({
+        id: bundleProduct.id,
+        name: bundleProduct.name,
+        price: bundleProduct.price,
+        image: bundleProduct.images[0],
+        quantity: 1,
+      })
+    })
+  }
+
+  return (
+    <div className="py-8 lg:py-12 overflow-x-hidden max-w-full w-full box-border relative">
+      <ViewContentTracker product={product} />
+
+      {/* Exit intent popup — FR only */}
+      {isFrenchVersion && (
+        <ExitIntentPopupFr
+          onConfirm={() => {
+            const btn = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
+            if (btn) {
+              btn.scrollIntoView({ behavior: "smooth" })
+            }
+          }}
+        />
+      )}
+
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 overflow-hidden w-full">
+        {/* Breadcrumb */}
+        <Link
+          href={isFrenchVersion ? `/product/${product.slug}` : "/products"}
+          className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t.backToProducts}
+        </Link>
+
+        {/* Product Section */}
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
+          {/* Gallery */}
+          <ProductGallery images={product.images} productName={product.name} video={product.video} />
+
+          {/* Details */}
+          <div className="flex flex-col min-w-0 w-full overflow-hidden max-w-full">
+            {/* Badge */}
+            {product.badge && (
+              <span
+                className={`mb-4 inline-block w-fit px-3 py-1 text-xs font-medium uppercase tracking-wider ${
+                  product.onSale ? "bg-accent text-accent-foreground" : "bg-foreground text-background"
+                }`}
+              >
+                {product.onSale ? `${isFrenchVersion ? "Offre de Lancement" : "Launch Offer"}` : product.badge}
+              </span>
+            )}
+
+            {/* Title & Price */}
+            <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-balance break-words">{product.name}</h1>
+
+            {isFlexibleAcousticPanel && (
+              <div className="mt-2 flex flex-col gap-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm text-muted-foreground">4.8</span>
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="h-4 w-4 text-amber-400 fill-current" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <span className="text-sm text-sky-600 hover:text-sky-700 hover:underline cursor-pointer">(1080)</span>
+                </div>
+                <p className="text-sm">
+                  <span className="font-semibold">{isFrenchVersion ? "4500+ achetes" : "4500+ bought"}</span>{" "}
+                  <span className="text-muted-foreground">{isFrenchVersion ? "le mois dernier" : "in past month"}</span>
+                </p>
+              </div>
+            )}
+
+            {product.onSale && product.originalPrice ? (
+              <div className="mt-4">
+                <span className="inline-block px-2.5 py-1 text-xs font-medium bg-red-600 text-white rounded-sm mb-3">
+                  {isFrenchVersion ? "Offre limitee" : "Limited time deal"}
+                </span>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-xl sm:text-2xl font-medium text-red-600">-{discountPercent}%</span>
+                  <span className="text-2xl sm:text-3xl font-medium text-foreground">{isFrenchVersion ? "€" : "£"}{Math.floor(product.price)}</span>
+                  <span className="text-sm align-top relative -top-2">
+                    {((product.price % 1) * 100).toFixed(0).padStart(2, "0")}
+                  </span>
+                  {isFlexibleAcousticPanel && (
+                    <span className="text-sm sm:text-base text-muted-foreground ml-1">/ {isFrenchVersion ? "piece" : "piece"}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                  <span className="text-sm text-muted-foreground">{isFrenchVersion ? "Prix habituel:" : "Typical price:"}</span>
+                  <span className="text-sm text-muted-foreground line-through">
+                    {isFrenchVersion ? "€" : "£"}{product.originalPrice.toFixed(2)}
+                  </span>
+                  {!isFrenchVersion && (
+                    <span className="text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                      -60%
+                    </span>
+                  )}
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-pointer flex-shrink-0" />
+                </div>
+                {isFlexibleAcousticPanel && (
+                  <p className="text-xs text-muted-foreground mt-2">{isFrenchVersion ? "Offre de lancement limitée — Seulement quelques panneaux disponibles" : "Limited batch / Introductory offer — Only a few batches available"}</p>
+                )}
+                {isFlexibleAcousticPanel && <PeopleViewing isFrench={isFrenchVersion} />}
+              </div>
+            ) : (
+              <div className="mt-4">
+                <p className="font-serif text-2xl">{isFrenchVersion ? "€" : "£"}{product.price}</p>
+              </div>
+            )}
+
+
+
+            {isFlexibleAcousticPanel ? (
+              <div className="mt-6 space-y-5 max-w-full overflow-hidden">
+                {/* Clear Hero Promise */}
+                <div className="bg-secondary/50 border border-border/50 rounded-lg p-4">
+                  <p className="text-lg sm:text-xl font-serif font-medium text-foreground leading-snug text-center">
+                    {isFrenchVersion 
+                      ? "Transformez Votre Mur en Minutes — Sans Outils, Sans Salissure" 
+                      : "Transform Your Wall in Minutes — No Tools, No Mess"}
+                  </p>
+                  <div className="flex justify-center gap-3 mt-3 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-accent">
+                      <Check className="h-3.5 w-3.5" /> {isFrenchVersion ? "Flexible" : "Flexible"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-accent">
+                      <Check className="h-3.5 w-3.5" /> {isFrenchVersion ? "Acoustique" : "Acoustic"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-accent">
+                      <Check className="h-3.5 w-3.5" /> {isFrenchVersion ? "Auto-Adhesif" : "Peel & Stick"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* How It Works - 3 Steps */}
+                <div className="bg-accent/5 border border-accent/20 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-center mb-4">
+                    {isFrenchVersion ? "Comment Ca Marche" : "How It Works"}
+                  </h3>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                        <span className="text-accent font-bold">1</span>
+                      </div>
+                      <p className="text-xs font-medium">{isFrenchVersion ? "Decollez l'adhesif" : "Peel the adhesive"}</p>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                        <span className="text-accent font-bold">2</span>
+                      </div>
+                      <p className="text-xs font-medium">{isFrenchVersion ? "Placez & appuyez" : "Place & press"}</p>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                        <span className="text-accent font-bold">3</span>
+                      </div>
+                      <p className="text-xs font-medium">{isFrenchVersion ? "Profitez!" : "Enjoy!"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="leading-relaxed text-muted-foreground text-sm sm:text-base">
+                  {isFrenchVersion 
+                    ? "Le panneau acoustique flexible qui sublime votre espace, reduit l'echo et offre un look architectural moderne — sans renovation."
+                    : "The flexible acoustic panel that upgrades your space, reduces echo and delivers a modern architectural look — without renovation."}
+                </p>
+                
+                <ul className="space-y-2.5 pt-2">
+                  <li className="flex items-start gap-2.5 text-sm text-foreground">
+                    <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>{isFrenchVersion ? "Flexible" : "Flexible"}</strong> — {isFrenchVersion ? "Se plie aux courbes et piliers" : "Bends to curves and pillars"}</span>
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm text-foreground">
+                    <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>{isFrenchVersion ? "Installation facile" : "Easy Install"}</strong> — {isFrenchVersion ? "Auto-adhesif, sans outils" : "Peel & stick, no tools needed"}</span>
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm text-foreground">
+                    <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>{isFrenchVersion ? "Sans salissure" : "No Mess"}</strong> — {isFrenchVersion ? "Pas de peinture, pas de poussiere" : "No paint, no dust, no hassle"}</span>
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm text-foreground">
+                    <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>{isFrenchVersion ? "Acoustique" : "Acoustic"}</strong> — {isFrenchVersion ? "Reduit l'echo et ameliore le confort sonore" : "Reduces echo and improves sound comfort"}</span>
+                  </li>
+                  <li className="flex items-start gap-2.5 text-sm text-foreground">
+                    <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>{isFrenchVersion ? "Look Premium" : "Premium Look"}</strong> — {isFrenchVersion ? "Esthetique bois haut de gamme" : "High-end wood aesthetic"}</span>
+                  </li>
+                </ul>
+                <div className="pt-2 space-y-1.5 text-sm text-muted-foreground">
+                  <p>
+                    <span className="font-medium text-foreground">{isFrenchVersion ? "Taille:" : "Size:"}</span> 270 × 110 cm — {isFrenchVersion ? "couvre jusqu'a 3m²" : "covers up to 3m²"}
+                  </p>
+                  <p className="text-xs italic">
+                    {isFrenchVersion ? "Parfait pour les murs TV, les murs de caracteristique et les zones d'accent." : "Ideal for TV walls, feature walls and accent areas."}
+                  </p>
+                  <p className="break-words">
+                    <span className="font-medium text-foreground">{isFrenchVersion ? "Couleurs disponibles:" : "Available colors:"}</span> {isFrenchVersion ? "Chene Naturel, Chene Fume, Noyer, Chene Gris" : "Natural Oak, Smoked Oak, Walnut, Grey Oak"}
+                  </p>
+                </div>
+
+                {/* Certifications & Features Grid */}
+                <div className="mt-8 grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
+                    <h4 className="font-semibold text-sm sm:text-base">NRC 0.80</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Excellent Sound Absorption</p>
+                  </div>
+                  <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
+                    <h4 className="font-semibold text-sm sm:text-base">E1 Certified</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Low Formaldehyde Emission</p>
+                  </div>
+                  <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
+                    <h4 className="font-semibold text-sm sm:text-base">Easy Install</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">DIY Friendly Setup</p>
+                  </div>
+                  <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
+                    <h4 className="font-semibold text-sm sm:text-base">6 Colors</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Match Any Interior</p>
+                  </div>
+                </div>
+
+                <p className="pt-6 text-sm font-semibold text-accent">{isFrenchVersion ? "Sublimez votre espace aujourd'hui." : "Upgrade your space today."}</p>
+              </div>
+            ) : (
+              <p className="mt-6 leading-relaxed text-muted-foreground break-words">{product.longDescription}</p>
+            )}
+
+            {/* Color Selector */}
+            {product.colors && product.colors.length > 0 && <ColorSelector colors={product.colors} />}
+            {product.styles && product.styles.length > 0 && <StyleSelector styles={product.styles} />}
+
+            {/* Add to Cart */}
+            <div className="mt-8 flex flex-col gap-3">
+              {isFrenchVersion && <CountdownTimerFr />}
+              <AddToCartButton product={product} isFrenchVersion={isFrenchVersion} />
+              {isFrenchVersion && (
+                <p className="text-center text-xs text-muted-foreground">
+                  Expédition sous 24-48h • Livraison estimée 5 à 8 jours ouvrables
+                </p>
+              )}
+            </div>
+
+            {/* Trust Badges */}
+            <div className="mt-8 grid grid-cols-3 gap-2 border-t border-border pt-8">
+              <div className="flex flex-col items-center text-center">
+                <Truck className="h-5 w-5 text-muted-foreground" />
+                <span className="mt-2 text-[10px] sm:text-xs text-muted-foreground leading-tight">
+                  {isFrenchVersion ? "Livraison gratuite" : "Free Shipping"}
+                  <br className="sm:hidden" /> {isFrenchVersion ? "des 80€" : "Over £80"}
+                </span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <RotateCcw className="h-5 w-5 text-muted-foreground" />
+                <span className="mt-2 text-[10px] sm:text-xs text-muted-foreground leading-tight">{isFrenchVersion ? "Retours sous 30 jours" : "30-Day Returns"}</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <Shield className="h-5 w-5 text-muted-foreground" />
+                <span className="mt-2 text-[10px] sm:text-xs text-muted-foreground leading-tight">{isFrenchVersion ? "Garantie 5 ans" : "5-Year Warranty"}</span>
+              </div>
+            </div>
+
+            {/* Frequently Bought Together */}
+            {frequentlyBoughtTogether.length > 0 && (
+              <div className="mt-8 border-t border-border pt-8">
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4">{isFrenchVersion ? "Frequemment achetes ensemble" : "Frequently Bought Together"}</h2>
+                <div className="flex flex-col gap-4">
+                  {/* Products */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    {frequentlyBoughtTogether.map((bundleProduct, index) => (
+                      <div key={bundleProduct.id} className="flex items-center gap-3">
+                        <div className="w-20 sm:w-24 bg-secondary/30 rounded-lg overflow-hidden">
+                          <Link href={`/product/${bundleProduct.slug}`} className="block">
+                            <div className="aspect-square overflow-hidden">
+                              <Image
+                                src={bundleProduct.images[0] || "/placeholder.svg"}
+                                alt={bundleProduct.name}
+                                width={96}
+                                height={96}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
+                          </Link>
+                          <div className="p-1.5">
+                            <h3 className="text-[10px] sm:text-xs font-medium leading-tight line-clamp-2">
+                              {bundleProduct.name}
+                            </h3>
+                            <p className="text-[10px] sm:text-xs font-semibold mt-0.5">{isFrenchVersion ? "€" : "£"}{bundleProduct.price}</p>
+                          </div>
+                        </div>
+                        {index < frequentlyBoughtTogether.length - 1 && (
+                          <span className="text-lg font-light text-muted-foreground">+</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Price & Button */}
+                  <div className="flex items-center justify-between gap-3 pt-3 border-t border-border">
+                    <div>
+                      <p className="text-xs text-muted-foreground">{isFrenchVersion ? "Prix total:" : "Total price:"}</p>
+                      <p className="text-lg font-semibold">{isFrenchVersion ? "€" : "£"}{frequentlyBoughtTotal.toFixed(2)}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="px-4 py-2 text-sm font-medium bg-accent text-accent-foreground rounded-md hover:bg-accent/90 transition-colors whitespace-nowrap"
+                      onClick={handleAddBothToCart}
+                    >
+                      {isFrenchVersion ? "Ajouter au panier" : "Add Both to Cart"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Acoustic Line Section - Only for Flexible Acoustic Panel */}
+            {isFlexibleAcousticPanel && <AcousticLineSection isFrenchVersion={isFrenchVersion} />}
+
+            {/* You Might Also Like - Hide for French version */}
+            {orderBumpProducts.length > 0 && !isFrenchVersion && (
+              <div className="mt-8 border-t border-border pt-8">
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4">You Might Also Like</h2>
+                <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-3 px-3">
+                  {orderBumpProducts.map((bumpProduct) => (
+                    <div
+                      key={bumpProduct.id}
+                      className="flex-shrink-0 w-32 sm:w-36 bg-secondary/30 rounded-lg overflow-hidden flex flex-col"
+                    >
+                      <Link href={`/product/${bumpProduct.slug}`} className="block">
+                        <div className="relative aspect-square overflow-hidden">
+                          <Image
+                            src={bumpProduct.images[0] || "/placeholder.svg"}
+                            alt={bumpProduct.name}
+                            width={144}
+                            height={144}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                          {bumpProduct.badge && (
+                            <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[10px] font-medium uppercase bg-foreground text-background">
+                              {bumpProduct.badge}
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                      <div className="p-2 flex flex-col flex-1">
+                        <Link href={`/product/${bumpProduct.slug}`}>
+                          <h3 className="text-xs font-medium leading-tight h-8 line-clamp-2 hover:text-accent transition-colors">
+                            {bumpProduct.name}
+                          </h3>
+                        </Link>
+                        <p className="text-xs font-semibold mt-1">{isFrenchVersion ? "€" : "£"}{bumpProduct.price}</p>
+                        <div className="mt-auto pt-2">
+                          <AddToCartButton product={bumpProduct} variant="icon" className="w-full h-7 text-xs" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Product Details */}
+            <div className="mt-8 border-t border-border pt-8">
+              <h2 className="text-sm font-semibold uppercase tracking-wider">{t.features}</h2>
+              <dl className="mt-4 space-y-3">
+                {product.dimensions && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-sm">
+                    <dt className="text-muted-foreground shrink-0">{t.dimensions}</dt>
+                    <dd className="text-foreground break-words">{product.dimensions}</dd>
+                  </div>
+                )}
+                {product.material && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-sm">
+                    <dt className="text-muted-foreground shrink-0">{t.material}</dt>
+                    <dd className="text-foreground break-words">{product.material}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+
+            {/* Features */}
+            {product.features.length > 0 && (
+              <div className="mt-8 border-t border-border pt-8">
+                <h2 className="text-sm font-semibold uppercase tracking-wider">{t.features}</h2>
+                <ul className="mt-4 space-y-2">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3 text-sm">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                      <span className="text-muted-foreground flex-1">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* LED Strip Lifestyle Carousel - Only for Recessed LED Strip */}
+            {product.id === "prod_led_strip" && <LedStripCarousel />}
+
+            {/* Samples Section - Only for Flexible Acoustic Panel */}
+            {isFlexibleAcousticPanel && <SamplesSection isFrenchVersion={isFrenchVersion} />}
+          </div>
+        </div>
+
+        {/* Product Description Section */}
+        {isFlexibleAcousticPanel && <ProductDescriptionSection />}
+
+  {/* Customer Reviews Section */}
+  {isFlexibleAcousticPanel && <CustomerReviews isFrench={isFrenchVersion} />}
+
+        {/* Recessed LED Strip Section */}
+        {isRecessedLedStrip && <RecessedLedSection />}
+
+        {/* Related Products - Hide for French version */}
+        {relatedProducts.length > 0 && !isFrenchVersion && (
+          <section className="mt-16 sm:mt-24">
+            <h2 className="mb-6 sm:mb-8 font-serif text-xl sm:text-2xl">You May Also Like</h2>
+            <div className="grid gap-4 sm:gap-8 grid-cols-2 lg:grid-cols-4">
+              {relatedProducts.map((relatedProduct) => (
+                <ProductCard key={relatedProduct.id} product={relatedProduct} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Decor & Lighting cross-sell section */}
+        {decorAndLightingProducts.length > 0 && (
+          <section className="mt-12 sm:mt-16">
+            <h2 className="mb-4 sm:mb-8 font-serif text-xl sm:text-2xl">Complete Your Space</h2>
+            <p className="mb-6 sm:mb-8 text-sm sm:text-base text-muted-foreground">
+              Explore our curated selection of decor and lighting to complement your panels.
+            </p>
+            <div className="grid gap-4 sm:gap-8 grid-cols-2 lg:grid-cols-4">
+              {decorAndLightingProducts.map((crossProduct) => (
+                <ProductCard key={crossProduct.id} product={crossProduct} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* FR Sticky CTA for Mobile — aparece quando o botão principal sai da tela */}
+      {isFrenchVersion && isFlexibleAcousticPanel && showStickyFr && (
+        <div className="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.12)] px-4 py-3">
+          <button
+            onClick={() => {
+              const addButton = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
+              if (addButton) {
+                addButton.scrollIntoView({ behavior: "smooth" })
+              }
+            }}
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 transition-colors shadow-lg"
+          >
+            <ShoppingCart className="h-5 w-5 flex-shrink-0" />
+            Commander Maintenant — €54,00
+          </button>
+          <p className="text-center text-[10px] text-muted-foreground mt-1.5">Paiement 100% Sécurisé • Livraison 5-8 jours</p>
+        </div>
+      )}
+
+      {/* Floating CTA for Mobile - Only show if cart has items (non-FR) */}
+      {isFlexibleAcousticPanel && !isFrenchVersion && totalItems > 0 && (
+        <div
+          className="fixed bottom-6 left-4 right-4 lg:hidden z-40 transition-all duration-300"
+          style={{
+            opacity,
+            pointerEvents: isVisible ? 'auto' : 'none',
+          }}
+        >
+          <button
+            onClick={() => {
+              const addButton = document.querySelector('[data-add-to-cart]') as HTMLButtonElement
+              if (addButton) {
+                addButton.scrollIntoView({ behavior: 'smooth' })
+                addButton.click()
+              }
+            }}
+            className="w-full bg-accent text-accent-foreground py-3 px-4 rounded-lg font-medium text-sm hover:bg-accent/90 transition-colors shadow-lg"
+          >
+            Start with one panel
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
