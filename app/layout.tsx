@@ -19,7 +19,10 @@ export const metadata: Metadata = {
   description:
     "Premium wood slat wall panels, acoustic solutions, and curated home decor. European craftsmanship for modern interiors.",
   keywords: ["wood slat panels", "acoustic panels", "interior design", "home decor", "premium wall panels"],
-    generator: 'v0.app'
+  generator: "v0.app",
+  other: {
+    "facebook-domain-verification": "0flnhzhj5a1hojebzmwgiiplk1mj8i",
+  },
 }
 
 export default function RootLayout({
@@ -32,8 +35,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="facebook-domain-verification" content="0flnhzhj5a1hojebzmwgiiplk1mj8i" />
-
         {/* Meta Pixel Code - ID from environment variable */}
         <Script id="meta-pixel-init" strategy="beforeInteractive">
           {`
