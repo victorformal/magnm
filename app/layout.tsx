@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="facebook-domain-verification" content="doluxynzdjfzg90rzthp0243s680oy" />
+        <meta name="facebook-domain-verification" content="0flnhzhj5a1hojebzmwgiiplk1mj8i" />
 
         {/* Meta Pixel Code - ID from environment variable */}
         <Script id="meta-pixel-init" strategy="beforeInteractive">
