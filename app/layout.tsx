@@ -47,6 +47,15 @@ export default function RootLayout({
             fbq('track', 'PageView');
           `}
         </Script>
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src="https://www.facebook.com/tr?id=1139772708143683&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
 
         {/* Google Analytics */}
         <Script async src="https://www.googletagmanager.com/gtag/js?id=G-E72RJSKTZ3" strategy="afterInteractive" />
