@@ -15,6 +15,9 @@ export function ExitIntentPopup({ onConfirm }: ExitIntentPopupProps) {
     // Don't show again if already dismissed this session
     if (sessionStorage.getItem("exit_popup_dismissed_en")) return
 
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768
+
+    // --- Desktop: mouseleave toward top of browser ---
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0 && !dismissed) {
         setShow(true)
@@ -22,14 +25,32 @@ export function ExitIntentPopup({ onConfirm }: ExitIntentPopupProps) {
       }
     }
 
-    // Small delay before activating to avoid false triggers on page load
+    // --- Mobile: fast scroll-up trigger ---
+    let lastScrollY = window.scrollY
+    let hasScrolledDown = false
+    const handleScroll = () => {
+      const currentY = window.scrollY
+      const delta = lastScrollY - currentY // positive = scrolling up
+      if (currentY > 300) hasScrolledDown = true
+      if (hasScrolledDown && delta > 60 && !dismissed) {
+        setShow(true)
+        setDismissed(true)
+      }
+      lastScrollY = currentY
+    }
+
     const timer = setTimeout(() => {
-      document.addEventListener("mouseleave", handleMouseLeave)
+      if (isMobile) {
+        window.addEventListener("scroll", handleScroll, { passive: true })
+      } else {
+        document.addEventListener("mouseleave", handleMouseLeave)
+      }
     }, 3000)
 
     return () => {
       clearTimeout(timer)
       document.removeEventListener("mouseleave", handleMouseLeave)
+      window.removeEventListener("scroll", handleScroll)
     }
   }, [dismissed])
 
