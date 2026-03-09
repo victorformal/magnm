@@ -50,7 +50,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     return true
   }).slice(0, 6)
 
-  const isFlexibleAcousticPanel = product.id === "prod_U2rtV5Q5yVJ2XV" || product.id === "prod_U2rumuoWXebtgj"
+  const isFlexibleAcousticPanel = product.id === "prod_U4kuSjp9pwoOzo" || product.id === "prod_U2rumuoWXebtgj"
   const isRecessedLedStrip = product.slug === "recessed-led-strip-lighting" || product.slug === "recessed-led-strip-lighting-fr"
   const isTableauMadrid = product.id === "prod_U2rvgYxfRGaGl7"
 

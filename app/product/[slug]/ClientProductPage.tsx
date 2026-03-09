@@ -22,6 +22,8 @@ import { SamplesSection } from "@/components/samples-section"
 import { AcousticLineSection } from "@/components/acoustic-line-section"
 import { CountdownTimerFr } from "@/components/countdown-timer-fr"
 import { ExitIntentPopupFr } from "@/components/exit-intent-popup-fr"
+import { CountdownTimer } from "@/components/countdown-timer"
+import { ExitIntentPopup } from "@/components/exit-intent-popup"
 
 interface ClientProductPageProps {
   product: any
@@ -102,21 +104,21 @@ export default function ClientProductPage({
   const t = isFrenchVersion ? frenchTranslations : englishTranslations
   const { addItem, totalItems } = useCart()
   const { opacity, isVisible } = useScrollVisibility()
-  const [showStickyFr, setShowStickyFr] = useState(false)
-
-  // FR sticky CTA: show when main CTA button scrolls out of view
+  const [showStickyCta, setShowStickyCta] = useState(false)
+  
+  // Sticky CTA: show when main CTA button scrolls out of view (for FR or EN Flexible Acoustic)
   useEffect(() => {
-    if (!isFrenchVersion) return
+    if (!isFrenchVersion && !isFlexibleAcousticPanel) return
     const handleScroll = () => {
       const btn = document.querySelector("[data-add-to-cart]") as HTMLElement | null
       if (btn) {
         const rect = btn.getBoundingClientRect()
-        setShowStickyFr(rect.bottom < 0)
+        setShowStickyCta(rect.bottom < 0)
       }
     }
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [isFrenchVersion])
+  }, [isFrenchVersion, isFlexibleAcousticPanel])
 
   const handleAddBothToCart = () => {
     frequentlyBoughtTogether.forEach((bundleProduct) => {
@@ -137,6 +139,18 @@ export default function ClientProductPage({
       {/* Exit intent popup — FR only */}
       {isFrenchVersion && (
         <ExitIntentPopupFr
+          onConfirm={() => {
+            const btn = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
+            if (btn) {
+              btn.scrollIntoView({ behavior: "smooth" })
+            }
+          }}
+        />
+      )}
+
+      {/* Exit intent popup — EN Flexible Acoustic Panel only */}
+      {!isFrenchVersion && isFlexibleAcousticPanel && (
+        <ExitIntentPopup
           onConfirm={() => {
             const btn = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
             if (btn) {
@@ -359,10 +373,20 @@ export default function ClientProductPage({
             {/* Add to Cart */}
             <div className="mt-8 flex flex-col gap-3">
               {isFrenchVersion && <CountdownTimerFr />}
-              <AddToCartButton product={product} isFrenchVersion={isFrenchVersion} />
+              {!isFrenchVersion && isFlexibleAcousticPanel && <CountdownTimer />}
+              <AddToCartButton 
+                product={product} 
+                isFrenchVersion={isFrenchVersion} 
+                isEnglishFlexibleAcoustic={!isFrenchVersion && isFlexibleAcousticPanel}
+              />
               {isFrenchVersion && (
                 <p className="text-center text-xs text-muted-foreground">
                   Expédition sous 24-48h • Livraison estimée 5 à 8 jours ouvrables
+                </p>
+              )}
+              {!isFrenchVersion && isFlexibleAcousticPanel && (
+                <p className="text-center text-xs text-muted-foreground">
+                  Dispatch within 24-48h • Estimated delivery 5-8 business days
                 </p>
               )}
             </div>
@@ -564,8 +588,8 @@ export default function ClientProductPage({
         )}
       </div>
 
-      {/* FR Sticky CTA for Mobile — aparece quando o botão principal sai da tela */}
-      {isFrenchVersion && isFlexibleAcousticPanel && showStickyFr && (
+      {/* Sticky CTA for Mobile — aparece quando o botão principal sai da tela */}
+      {isFlexibleAcousticPanel && showStickyCta && (
         <div className="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.12)] px-4 py-3">
           <button
             onClick={() => {
@@ -577,33 +601,11 @@ export default function ClientProductPage({
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 transition-colors shadow-lg"
           >
             <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-            Commander Maintenant — €54,00
+            {isFrenchVersion ? "Commander Maintenant — €54,00" : "Order Now — £60.00"}
           </button>
-          <p className="text-center text-[10px] text-muted-foreground mt-1.5">Paiement 100% Sécurisé • Livraison 5-8 jours</p>
-        </div>
-      )}
-
-      {/* Floating CTA for Mobile - Only show if cart has items (non-FR) */}
-      {isFlexibleAcousticPanel && !isFrenchVersion && totalItems > 0 && (
-        <div
-          className="fixed bottom-6 left-4 right-4 lg:hidden z-40 transition-all duration-300"
-          style={{
-            opacity,
-            pointerEvents: isVisible ? 'auto' : 'none',
-          }}
-        >
-          <button
-            onClick={() => {
-              const addButton = document.querySelector('[data-add-to-cart]') as HTMLButtonElement
-              if (addButton) {
-                addButton.scrollIntoView({ behavior: 'smooth' })
-                addButton.click()
-              }
-            }}
-            className="w-full bg-accent text-accent-foreground py-3 px-4 rounded-lg font-medium text-sm hover:bg-accent/90 transition-colors shadow-lg"
-          >
-            Start with one panel
-          </button>
+          <p className="text-center text-[10px] text-muted-foreground mt-1.5">
+            {isFrenchVersion ? "Paiement 100% Sécurisé • Livraison 5-8 jours" : "100% Secure Payment • Delivery 5-8 days"}
+          </p>
         </div>
       )}
     </div>
