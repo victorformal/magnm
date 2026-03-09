@@ -16,6 +16,7 @@ interface AddToCartButtonProps {
   variant?: "default" | "icon"
   className?: string
   isFrenchVersion?: boolean
+  isEnglishFlexibleAcoustic?: boolean
 }
 
 // FR upsell quantity options
@@ -26,14 +27,29 @@ const frQuantities = [
   { qty: 6, price: 80.00, label: "6 Panneaux", badge: "Meilleure Valeur", savings: "€12,64", freeShipping: true },
 ]
 
-export function AddToCartButton({ product, variant = "default", className, isFrenchVersion = false }: AddToCartButtonProps) {
+// EN upsell quantity options for Flexible Acoustic Panel
+const enQuantities = [
+  { qty: 1, price: 17.90, label: "1 Panel", badge: null, savings: null, freeShipping: false },
+  { qty: 2, price: 32.00, label: "2 Panels", badge: null, savings: "£3.80", freeShipping: false },
+  { qty: 4, price: 60.00, label: "4 Panels", badge: "Most Popular", savings: "£11.60", freeShipping: true },
+  { qty: 6, price: 85.00, label: "6 Panels", badge: "Best Value", savings: "£22.40", freeShipping: true },
+]
+
+export function AddToCartButton({ product, variant = "default", className, isFrenchVersion = false, isEnglishFlexibleAcoustic = false }: AddToCartButtonProps) {
   const { addItem, items } = useCart()
   const router = useRouter()
 
   // FR: default to 4 panels option (index 2)
-  const [selectedQtyOption, setSelectedQtyOption] = useState(frQuantities[2])
-  // Non-FR: simple quantity
+  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[2])
+  // EN Flexible Acoustic: default to 4 panels option (index 2)
+  const [selectedQtyOptionEn, setSelectedQtyOptionEn] = useState(enQuantities[2])
+  // Non-FR/EN flexible: simple quantity
   const [quantity, setQuantity] = useState(1)
+  
+  // Determine which option set to use
+  const selectedQtyOption = isFrenchVersion ? selectedQtyOptionFr : selectedQtyOptionEn
+  const setSelectedQtyOption = isFrenchVersion ? setSelectedQtyOptionFr : setSelectedQtyOptionEn
+  const quantityOptions = isFrenchVersion ? frQuantities : enQuantities
 
   const handleBuyNow = (overrideQty?: number, overridePrice?: number) => {
     // Check if cart has products with different currency
@@ -50,9 +66,10 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       }
     }
 
-    const qty = overrideQty ?? (isFrenchVersion ? selectedQtyOption.qty : quantity)
-    const unitPrice = overridePrice ?? (isFrenchVersion ? selectedQtyOption.price / selectedQtyOption.qty : (product.salePrice || product.price))
-    const totalValue = overridePrice ?? (isFrenchVersion ? selectedQtyOption.price : (product.salePrice || product.price) * quantity)
+    const usePackages = isFrenchVersion || isEnglishFlexibleAcoustic
+    const qty = overrideQty ?? (usePackages ? selectedQtyOption.qty : quantity)
+    const unitPrice = overridePrice ?? (usePackages ? selectedQtyOption.price / selectedQtyOption.qty : (product.salePrice || product.price))
+    const totalValue = overridePrice ?? (usePackages ? selectedQtyOption.price : (product.salePrice || product.price) * quantity)
 
     const eventId = generateEventId("atc")
     const currency = isFrenchVersion ? "EUR" : "GBP"
@@ -110,8 +127,8 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       }),
     }).catch(console.error)
 
-    // For FR upsell, add the selected qty as a single cart entry with adjusted price
-    const productToAdd = isFrenchVersion
+    // For FR/EN upsell, add the selected qty as a single cart entry with adjusted price
+    const productToAdd = usePackages
       ? { ...product, price: selectedQtyOption.price / selectedQtyOption.qty }
       : product
     addItem(productToAdd, qty)
@@ -218,6 +235,73 @@ export function AddToCartButton({ product, variant = "default", className, isFre
         {/* Reassurance line */}
         <p className="text-center text-xs text-gray-500">
           Paiement 100% Sécurisé &nbsp;|&nbsp; Livraison Gratuite dès 80€
+        </p>
+      </div>
+    )
+  }
+
+  // English Flexible Acoustic Panel version: upsell quantity selector + orange CTA button
+  if (isEnglishFlexibleAcoustic) {
+    return (
+      <div className="flex flex-col gap-3 w-full">
+        {/* Quantity upsell cards */}
+        <div className="space-y-2">
+          {enQuantities.map((option) => {
+            const isSelected = selectedQtyOptionEn.qty === option.qty
+            return (
+              <button
+                key={option.qty}
+                type="button"
+                onClick={() => setSelectedQtyOptionEn(option)}
+                className={`w-full rounded-lg border-2 px-4 py-3 transition-all ${
+                  isSelected
+                    ? "border-[#FF6B00] bg-orange-50"
+                    : "border-gray-200 bg-white hover:border-gray-300"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-gray-900">{option.label}</span>
+                    {option.badge && (
+                      <span className={`text-white text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                        option.badge === "Most Popular" ? "bg-green-600" : "bg-amber-600"
+                      }`}>
+                        {option.badge}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">£{option.price.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  {option.savings ? (
+                    <span className="text-green-700 font-medium">Save {option.savings}</span>
+                  ) : (
+                    <span></span>
+                  )}
+                  {option.freeShipping && (
+                    <span className="text-green-700 font-medium">Free shipping included!</span>
+                  )}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Orange CTA button */}
+        <button
+          type="button"
+          disabled={!product.inStock}
+          onClick={() => handleBuyNow()}
+          data-add-to-cart="true"
+          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ShoppingCart className="h-5 w-5 flex-shrink-0" />
+          Order Now £{selectedQtyOptionEn.price.toFixed(2)}
+        </button>
+
+        {/* Reassurance line */}
+        <p className="text-center text-xs text-gray-500">
+          100% Secure Payment &nbsp;|&nbsp; Free Shipping Over £80
         </p>
       </div>
     )

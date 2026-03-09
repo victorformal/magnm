@@ -1,0 +1,115 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { X, ShoppingCart } from "lucide-react"
+
+interface ExitIntentPopupProps {
+  onConfirm: () => void
+}
+
+export function ExitIntentPopup({ onConfirm }: ExitIntentPopupProps) {
+  const [show, setShow] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
+
+  useEffect(() => {
+    // Don't show again if already dismissed this session
+    if (sessionStorage.getItem("exit_popup_dismissed_en")) return
+
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0 && !dismissed) {
+        setShow(true)
+        setDismissed(true)
+      }
+    }
+
+    // Small delay before activating to avoid false triggers on page load
+    const timer = setTimeout(() => {
+      document.addEventListener("mouseleave", handleMouseLeave)
+    }, 3000)
+
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener("mouseleave", handleMouseLeave)
+    }
+  }, [dismissed])
+
+  const handleClose = () => {
+    setShow(false)
+    sessionStorage.setItem("exit_popup_dismissed_en", "1")
+  }
+
+  const handleConfirm = () => {
+    setShow(false)
+    sessionStorage.setItem("exit_popup_dismissed_en", "1")
+    onConfirm()
+  }
+
+  if (!show) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 px-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Special offer"
+    >
+      <div
+        className="relative w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl"
+        style={{ animation: "popIn 0.3s ease" }}
+      >
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className="absolute right-3 top-3 rounded-full p-1 text-muted-foreground hover:bg-secondary transition-colors"
+          aria-label="Close"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {/* Header */}
+        <div className="mb-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Wait!</p>
+          <h2 className="text-xl font-bold text-foreground leading-tight">
+            Your acoustic panel<br />is still available
+          </h2>
+        </div>
+
+        {/* Offer */}
+        <div className="flex items-center justify-center gap-3 my-4">
+          <span className="text-lg line-through text-muted-foreground">£44.90</span>
+          <span className="text-4xl font-bold text-red-600">£17.90</span>
+          <span className="rounded bg-red-600 px-2 py-0.5 text-xs font-bold text-white">-60%</span>
+        </div>
+
+        {/* Urgency */}
+        <p className="text-sm font-medium text-red-700 mb-5">
+          Only <strong>3 pieces</strong> left in stock
+        </p>
+
+        {/* CTA */}
+        <button
+          onClick={handleConfirm}
+          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 transition-colors"
+        >
+          <ShoppingCart className="h-5 w-5 flex-shrink-0" />
+          I want my panel
+        </button>
+
+        {/* Dismiss */}
+        <button
+          onClick={handleClose}
+          className="mt-3 text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+        >
+          No thanks, I prefer to pay full price
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes popIn {
+          from { transform: scale(0.85); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
+    </div>
+  )
+}
