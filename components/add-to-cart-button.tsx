@@ -69,10 +69,8 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
     const usePackages = isFrenchVersion || isEnglishFlexibleAcoustic
 
-    // FR: if NOT the 12-panel pack (ledFree), charge original price (qty × 34.90) instead of discounted pack price
-    const frEffectiveTotal = isFrenchVersion
-      ? (selectedQtyOptionFr.ledFree ? selectedQtyOptionFr.price : selectedQtyOptionFr.original)
-      : 0
+    // FR: always use the discounted pack price (€179/€229/€279/€329)
+    const frEffectiveTotal = isFrenchVersion ? selectedQtyOptionFr.price : 0
 
     const qty = overrideQty ?? (usePackages ? selectedQtyOption.qty : quantity)
     const unitPrice = overridePrice ?? (
@@ -294,7 +292,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Commander Maintenant €{(selectedFr.ledFree ? selectedFr.price : selectedFr.original).toFixed(2).replace(".", ",")}
+          Commander Maintenant €{selectedFr.price.toFixed(2).replace(".", ",")}
         </button>
 
         {/* Reassurance line */}
