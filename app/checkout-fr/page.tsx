@@ -20,7 +20,11 @@ interface StoredOrder {
   quantity: number
   image: string
   currency: string
+  ledFree?: boolean   // true when 12-panel pack (Kit LED included)
 }
+
+const LED_KIT_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LED0101-NcQN4b3GARfX7EQhQSIcnMbQB9NsFa.jpg"
+const LED_KIT_PRODUCT_URL = "/product/recessed-led-strip-lighting-fr"
 
 export default function CheckoutFrPage() {
   const router = useRouter()
@@ -148,8 +152,8 @@ export default function CheckoutFrPage() {
             Récapitulatif de la commande
           </h2>
 
-          {/* Item */}
-          <div className="flex items-center gap-3 mb-4">
+          {/* Main product item */}
+          <div className="flex items-center gap-3 mb-3">
             {storedOrder.image && (
               <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-secondary/30 flex-shrink-0">
                 <Image
@@ -166,6 +170,33 @@ export default function CheckoutFrPage() {
             </div>
             <p className="text-sm font-semibold flex-shrink-0">€{totalEur.toFixed(2)}</p>
           </div>
+
+          {/* LED kit bonus item — only shown for 12-panel pack */}
+          {storedOrder.ledFree && (
+            <div className="flex items-center gap-3 mb-4 rounded-lg border border-dashed border-emerald-400 bg-emerald-50 px-3 py-2.5">
+              <a href={LED_KIT_PRODUCT_URL} target="_blank" rel="noopener noreferrer" className="relative w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0 block border border-emerald-200">
+                <Image
+                  src={LED_KIT_IMAGE}
+                  alt="Kit Ruban LED Encastré"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </a>
+              <div className="flex-1 min-w-0">
+                <a
+                  href={LED_KIT_PRODUCT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium leading-tight text-emerald-800 underline underline-offset-2 hover:text-emerald-600"
+                >
+                  Kit Ruban LED Encastré
+                </a>
+                <p className="text-xs text-emerald-700 mt-0.5">Bonus Pack Pro — inclus gratuitement</p>
+              </div>
+              <p className="text-sm font-semibold flex-shrink-0 text-emerald-700 line-through opacity-60">€49,00</p>
+            </div>
+          )}
 
           {/* Totals */}
           <div className="border-t border-border pt-3 space-y-2">
