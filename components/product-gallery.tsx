@@ -100,8 +100,10 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
             {!isVideoPlaying && (
               <button
                 type="button"
-                onClick={handlePlayVideo}
-                onTouchEnd={(e) => { e.stopPropagation(); handlePlayVideo() }}
+                onClick={(e) => { e.stopPropagation(); handlePlayVideo() }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); handlePlayVideo() }}
                 className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity hover:bg-black/30"
                 aria-label="Play video"
               >
