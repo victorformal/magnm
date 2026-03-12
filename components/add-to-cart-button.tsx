@@ -24,10 +24,11 @@ interface AddToCartButtonProps {
 // FR upsell quantity options — base price €34,90/panneau
 // original = qty × 34.90 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 6,  price: 179.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€30,40", freeShipping: true, ledFree: false },
-  { qty: 8,  price: 229.00, original: 279.20, label: "8 Panneaux",  badge: null,               savings: "€50,20", freeShipping: true, ledFree: false },
-  { qty: 10, price: 279.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€70,00", freeShipping: true, ledFree: false },
-  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true, ledFree: true  },
+  { qty: 2,  price: 59.00,  original: 69.80,  label: "2 Panneaux",  badge: null,               savings: "€10,80", freeShipping: false, ledFree: false },
+  { qty: 6,  price: 179.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€30,40", freeShipping: true,  ledFree: false },
+  { qty: 8,  price: 229.00, original: 279.20, label: "8 Panneaux",  badge: null,               savings: "€50,20", freeShipping: true,  ledFree: false },
+  { qty: 10, price: 279.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€70,00", freeShipping: true,  ledFree: false },
+  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true,  ledFree: true  },
 ]
 
 // EN upsell quantity options for Flexible Acoustic Panel
@@ -42,8 +43,8 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   const { addItem, items } = useCart()
   const router = useRouter()
 
-  // FR: default to 6 panels option (index 0 — minimum)
-  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[0])
+  // FR: default to 6 panels option (index 1)
+  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[1])
   // EN Flexible Acoustic: default to 4 panels option (index 2)
   const [selectedQtyOptionEn, setSelectedQtyOptionEn] = useState(enQuantities[2])
   // Non-FR/EN flexible: simple quantity
