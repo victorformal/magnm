@@ -17,6 +17,8 @@ interface AddToCartButtonProps {
   className?: string
   isFrenchVersion?: boolean
   isEnglishFlexibleAcoustic?: boolean
+  /** Callback fired after item is added to cart (FR only) — used for silent add + scroll behavior */
+  onAddedToCart?: (orderData: { qty: number; price: number; totalPrice: number; ledFree: boolean }) => void
 }
 
 // FR upsell quantity options — base price €34,90/panneau
@@ -36,7 +38,7 @@ const enQuantities = [
   { qty: 6, price: 85.00, label: "6 Panels", badge: "Best Value", savings: "£22.40", freeShipping: true },
 ]
 
-export function AddToCartButton({ product, variant = "default", className, isFrenchVersion = false, isEnglishFlexibleAcoustic = false }: AddToCartButtonProps) {
+export function AddToCartButton({ product, variant = "default", className, isFrenchVersion = false, isEnglishFlexibleAcoustic = false, onAddedToCart }: AddToCartButtonProps) {
   const { addItem, items } = useCart()
   const router = useRouter()
 
@@ -167,9 +169,20 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       } catch (e) {
         // sessionStorage not available — cart context will be used as fallback
       }
+
+      // FR: if callback provided, do silent add + scroll instead of redirect
+      if (onAddedToCart) {
+        onAddedToCart({
+          qty: selectedQtyOptionFr.qty,
+          price: frEffectiveTotal / selectedQtyOptionFr.qty,
+          totalPrice: frEffectiveTotal,
+          ledFree: selectedQtyOptionFr.ledFree,
+        })
+        return // Don't redirect — let parent handle scroll to Order Summary
+      }
     }
 
-    // FR version goes to optimized pre-checkout summary page
+    // Redirect to cart/checkout
     router.push(isFrenchVersion ? "/checkout-fr" : "/cart")
   }
 
