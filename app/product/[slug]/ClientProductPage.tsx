@@ -113,18 +113,18 @@ export default function ClientProductPage({
   // FR Order Summary state — shows after "Commander Maintenant" is clicked
   const [frOrderData, setFrOrderData] = useState<{ qty: number; price: number; totalPrice: number; ledFree: boolean } | null>(null)
 
-  // FR: callback when item is added to cart — show toast + scroll to Order Summary
+  // FR: callback when item is added to cart — show toast + scroll to Acoustic Line Section
   const handleFrAddedToCart = (orderData: { qty: number; price: number; totalPrice: number; ledFree: boolean }) => {
     setFrOrderData(orderData)
     toast({
       title: "Produit ajouté !",
       description: "Finalisez votre commande ci-dessous",
     })
-    // Scroll to Order Summary after a small delay
+    // Scroll to Acoustic Line Section after a small delay
     setTimeout(() => {
-      const orderSummary = document.getElementById("order-summary-fr")
-      if (orderSummary) {
-        orderSummary.scrollIntoView({ behavior: "smooth", block: "start" })
+      const acousticSection = document.getElementById("acoustic-line-section")
+      if (acousticSection) {
+        acousticSection.scrollIntoView({ behavior: "smooth", block: "start" })
       }
     }, 100)
   }
@@ -488,7 +488,11 @@ export default function ClientProductPage({
             )}
 
             {/* Acoustic Line Section - Only for Flexible Acoustic Panel */}
-            {isFlexibleAcousticPanel && <AcousticLineSection isFrenchVersion={isFrenchVersion} />}
+            {isFlexibleAcousticPanel && (
+              <div id="acoustic-line-section" className="scroll-mt-4">
+                <AcousticLineSection isFrenchVersion={isFrenchVersion} />
+              </div>
+            )}
 
             {/* You Might Also Like - Hide for French version */}
             {orderBumpProducts.length > 0 && !isFrenchVersion && (
