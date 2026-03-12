@@ -592,16 +592,26 @@ export default function ClientProductPage({
       {isFlexibleAcousticPanel && showStickyCta && (
         <div className="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.12)] px-4 py-3">
           <button
+            type="button"
             onClick={() => {
-              const addButton = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
-              if (addButton) {
-                addButton.scrollIntoView({ behavior: "smooth" })
+              if (isFrenchVersion) {
+                // FR: scroll to the add-to-cart section so the user can confirm the pack
+                const addButton = document.querySelector("[data-add-to-cart]") as HTMLElement
+                if (addButton) {
+                  addButton.scrollIntoView({ behavior: "smooth", block: "center" })
+                  addButton.click()
+                }
+              } else {
+                const addButton = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
+                if (addButton) {
+                  addButton.scrollIntoView({ behavior: "smooth" })
+                }
               }
             }}
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 transition-colors shadow-lg"
           >
             <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-            {isFrenchVersion ? "Commander Maintenant — €54,00" : "Order Now — £60.00"}
+            {isFrenchVersion ? "Commander Maintenant" : "Order Now — £60.00"}
           </button>
           <p className="text-center text-[10px] text-muted-foreground mt-1.5">
             {isFrenchVersion ? "Paiement 100% Sécurisé • Livraison 5-8 jours" : "100% Secure Payment • Delivery 5-8 days"}
