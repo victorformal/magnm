@@ -162,6 +162,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
         quantity: selectedQtyOptionFr.qty,
         image: product.images?.[0] || product.image || "",
         currency: "EUR",
+        ledFree: selectedQtyOptionFr.ledFree,  // true when 12-panel pack selected
       }
       try {
         sessionStorage.setItem("checkout_order_fr", JSON.stringify(orderData))

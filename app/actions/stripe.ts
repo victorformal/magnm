@@ -262,14 +262,15 @@ export async function createCheckoutSessionFr(items: CartItem[], origin: string,
       }
     })
 
+    // FR: use the client-sent price (pack price already negotiated client-side)
+    // Do NOT override with serverProduct price to preserve pack discounts
     const lineItems = items.map((item) => {
-      const serverProduct = products.find((p) => p.id === item.product.id)
-      const unitPrice = serverProduct ? serverProduct.salePrice || serverProduct.price : item.product.salePrice || item.product.price
-      const roundedAmount = Math.round(unitPrice * 100)
+      const clientUnitPrice = item.product.salePrice ?? item.product.price
+      const roundedAmount = Math.round(clientUnitPrice * 100)
       return {
         price_data: {
           currency: "eur",
-          product_data: { name: serverProduct?.name || item.product.name },
+          product_data: { name: item.product.name },
           unit_amount: roundedAmount,
         },
         quantity: item.quantity,
