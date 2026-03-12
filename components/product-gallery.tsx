@@ -12,10 +12,17 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ images, productName, video }: ProductGalleryProps) {
-  // Total items = images + optional video at the end
-  const totalItems = images.length + (video ? 1 : 0)
-  const videoIndex = video ? images.length : -1
+  // Build ordered items: [img0, video?, img1, img2, ...]
+  // Video is inserted at position 1 (second slot) when present
+  const orderedItems: Array<{ type: "image"; src: string } | { type: "video" }> = video
+    ? [
+        { type: "image", src: images[0] },
+        { type: "video" },
+        ...images.slice(1).map((src) => ({ type: "image" as const, src })),
+      ]
+    : images.map((src) => ({ type: "image" as const, src }))
 
+  const totalItems = orderedItems.length
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -23,7 +30,8 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
   const touchEndX = useRef(0)
 
   const isExternalImage = (src: string) => src.startsWith("http")
-  const isVideoSelected = selectedIndex === videoIndex
+  const currentItem = orderedItems[selectedIndex]
+  const isVideoSelected = currentItem?.type === "video"
 
   const handlePlayVideo = useCallback(() => {
     if (videoRef.current) {
@@ -85,7 +93,6 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
               onPause={() => setIsVideoPlaying(false)}
               onEnded={() => setIsVideoPlaying(false)}
             />
-            {/* Play overlay */}
             {!isVideoPlaying && (
               <button
                 type="button"
@@ -100,21 +107,23 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
             )}
           </div>
         ) : (
-          <Image
-            src={images[selectedIndex] || "/placeholder.svg"}
-            alt={`${productName} - Image ${selectedIndex + 1}`}
-            width={400}
-            height={400}
-            className="h-full w-full object-contain"
-            style={{ width: "auto", height: "auto" }}
-            priority
-            sizes="(max-width: 350px) 100vw, 400px"
-            unoptimized={isExternalImage(images[selectedIndex] || "")}
-          />
+          currentItem?.type === "image" && (
+            <Image
+              src={currentItem.src || "/placeholder.svg"}
+              alt={`${productName} - Image ${selectedIndex + 1}`}
+              width={400}
+              height={400}
+              className="h-full w-full object-contain"
+              style={{ width: "auto", height: "auto" }}
+              priority
+              sizes="(max-width: 350px) 100vw, 400px"
+              unoptimized={isExternalImage(currentItem.src || "")}
+            />
+          )
         )}
       </div>
 
-      {/* Thumbnail strip - swipeable */}
+      {/* Thumbnail strip — ordered: img0, video (pos 1), img1, img2, ... */}
       {totalItems > 1 && (
         <div className="max-w-[350px] sm:max-w-[400px] mx-auto w-full overflow-hidden">
           <div
@@ -125,43 +134,42 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
               WebkitOverflowScrolling: "touch",
             }}
           >
-            {/* Image thumbnails */}
-            {images.map((image, index) => (
-              <button
-                type="button"
-                key={index}
-                onClick={() => handleSelectIndex(index)}
-                className={cn(
-                  "w-10 h-10 sm:w-12 sm:h-12 min-w-[40px] sm:min-w-[48px] min-h-[40px] sm:min-h-[48px] overflow-hidden bg-secondary transition-all flex-shrink-0",
-                  selectedIndex === index ? "ring-1 ring-foreground" : "opacity-60 hover:opacity-100",
-                )}
-              >
-                <Image
-                  src={image || "/placeholder.svg"}
-                  alt={`${productName} thumbnail ${index + 1}`}
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-cover"
-                  style={{ width: "auto", height: "auto" }}
-                  sizes="48px"
-                  unoptimized={isExternalImage(image)}
-                />
-              </button>
-            ))}
-
-            {/* Video thumbnail */}
-            {video && (
-              <button
-                type="button"
-                onClick={() => handleSelectIndex(videoIndex)}
-                className={cn(
-                  "w-10 h-10 sm:w-12 sm:h-12 min-w-[40px] sm:min-w-[48px] min-h-[40px] sm:min-h-[48px] overflow-hidden bg-foreground/90 transition-all flex-shrink-0 flex items-center justify-center",
-                  selectedIndex === videoIndex ? "ring-1 ring-foreground" : "opacity-60 hover:opacity-100",
-                )}
-                aria-label="Play video"
-              >
-                <Play className="h-4 w-4 sm:h-5 sm:w-5 text-background fill-background" />
-              </button>
+            {orderedItems.map((item, index) =>
+              item.type === "video" ? (
+                <button
+                  type="button"
+                  key="video-thumb"
+                  onClick={() => handleSelectIndex(index)}
+                  className={cn(
+                    "w-10 h-10 sm:w-12 sm:h-12 min-w-[40px] sm:min-w-[48px] min-h-[40px] sm:min-h-[48px] overflow-hidden bg-foreground/90 transition-all flex-shrink-0 flex items-center justify-center",
+                    selectedIndex === index ? "ring-1 ring-foreground" : "opacity-60 hover:opacity-100",
+                  )}
+                  aria-label="Play video"
+                >
+                  <Play className="h-4 w-4 sm:h-5 sm:w-5 text-background fill-background" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  key={`img-${index}`}
+                  onClick={() => handleSelectIndex(index)}
+                  className={cn(
+                    "w-10 h-10 sm:w-12 sm:h-12 min-w-[40px] sm:min-w-[48px] min-h-[40px] sm:min-h-[48px] overflow-hidden bg-secondary transition-all flex-shrink-0",
+                    selectedIndex === index ? "ring-1 ring-foreground" : "opacity-60 hover:opacity-100",
+                  )}
+                >
+                  <Image
+                    src={item.src || "/placeholder.svg"}
+                    alt={`${productName} thumbnail ${index + 1}`}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                    style={{ width: "auto", height: "auto" }}
+                    sizes="48px"
+                    unoptimized={isExternalImage(item.src)}
+                  />
+                </button>
+              )
             )}
           </div>
         </div>

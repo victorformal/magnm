@@ -65,6 +65,9 @@ export function ExitIntentPopupFr({ onConfirm }: ExitIntentPopupFrProps) {
     onConfirm()
   }
 
+  // Popup desativado
+  return null
+  // eslint-disable-next-line no-unreachable
   if (!show) return null
 
   return (

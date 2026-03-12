@@ -19,12 +19,13 @@ interface AddToCartButtonProps {
   isEnglishFlexibleAcoustic?: boolean
 }
 
-// FR upsell quantity options — minimum 6 panels (4 tiers: 6 / 8 / 10 / 12)
+// FR upsell quantity options — base price €34,90/panneau
+// original = qty × 34.90 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 6,  price: 199.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€10,40", freeShipping: true, ledFree: false },
-  { qty: 8,  price: 259.00, original: 279.20, label: "8 Panneaux",  badge: null,               savings: "€20,20", freeShipping: true, ledFree: false },
-  { qty: 10, price: 319.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€30,00", freeShipping: true, ledFree: false },
-  { qty: 12, price: 379.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro ⚡",      savings: "€39,80", freeShipping: true, ledFree: true  },
+  { qty: 6,  price: 179.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€30,40", freeShipping: true, ledFree: false },
+  { qty: 8,  price: 229.00, original: 279.20, label: "8 Panneaux",  badge: null,               savings: "€50,20", freeShipping: true, ledFree: false },
+  { qty: 10, price: 279.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€70,00", freeShipping: true, ledFree: false },
+  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true, ledFree: true  },
 ]
 
 // EN upsell quantity options for Flexible Acoustic Panel
@@ -67,9 +68,27 @@ export function AddToCartButton({ product, variant = "default", className, isFre
     }
 
     const usePackages = isFrenchVersion || isEnglishFlexibleAcoustic
+
+    // FR: if NOT the 12-panel pack (ledFree), charge original price (qty × 34.90) instead of discounted pack price
+    const frEffectiveTotal = isFrenchVersion
+      ? (selectedQtyOptionFr.ledFree ? selectedQtyOptionFr.price : selectedQtyOptionFr.original)
+      : 0
+
     const qty = overrideQty ?? (usePackages ? selectedQtyOption.qty : quantity)
-    const unitPrice = overridePrice ?? (usePackages ? selectedQtyOption.price / selectedQtyOption.qty : (product.salePrice || product.price))
-    const totalValue = overridePrice ?? (usePackages ? selectedQtyOption.price : (product.salePrice || product.price) * quantity)
+    const unitPrice = overridePrice ?? (
+      isFrenchVersion
+        ? frEffectiveTotal / selectedQtyOptionFr.qty
+        : usePackages
+          ? selectedQtyOption.price / selectedQtyOption.qty
+          : (product.salePrice || product.price)
+    )
+    const totalValue = overridePrice ?? (
+      isFrenchVersion
+        ? frEffectiveTotal
+        : usePackages
+          ? selectedQtyOption.price
+          : (product.salePrice || product.price) * quantity
+    )
 
     const eventId = generateEventId("atc")
     const currency = isFrenchVersion ? "EUR" : "GBP"
@@ -129,7 +148,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
     // For FR/EN upsell, add the selected qty as a single cart entry with adjusted price
     const productToAdd = usePackages
-      ? { ...product, price: selectedQtyOption.price / selectedQtyOption.qty }
+      ? { ...product, price: isFrenchVersion ? frEffectiveTotal / selectedQtyOptionFr.qty : selectedQtyOption.price / selectedQtyOption.qty }
       : product
     addItem(productToAdd, qty)
 
@@ -138,9 +157,9 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       const orderData = {
         productId: product.id,
         name: product.name,
-        price: selectedQtyOption.price / selectedQtyOption.qty,
-        totalPrice: selectedQtyOption.price,
-        quantity: selectedQtyOption.qty,
+        price: frEffectiveTotal / selectedQtyOptionFr.qty,
+        totalPrice: frEffectiveTotal,
+        quantity: selectedQtyOptionFr.qty,
         image: product.images?.[0] || product.image || "",
         currency: "EUR",
       }
@@ -231,7 +250,15 @@ export function AddToCartButton({ product, variant = "default", className, isFre
             <span className="text-base leading-none flex-shrink-0">💡</span>
             <span>
               Passez à <strong className="text-[#FF6B00]">12 Panneaux</strong> et recevez le{" "}
-              <strong>Kit Ruban LED Encastré (valeur €49,00) OFFERT</strong> — éclairage parfait inclus.
+              <a
+                href="/product/recessed-led-strip-lighting-fr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold underline underline-offset-2 text-emerald-800 hover:text-emerald-600"
+              >
+                Kit Ruban LED Encastré
+              </a>{" "}
+              (valeur €49,00) <strong>OFFERT</strong> — éclairage parfait inclus.
             </span>
           </div>
         )}
@@ -240,7 +267,17 @@ export function AddToCartButton({ product, variant = "default", className, isFre
         {selectedFr.ledFree && (
           <div className="rounded-lg bg-emerald-800 text-white px-4 py-3 text-xs leading-relaxed">
             <p className="font-bold text-emerald-200 text-[10px] uppercase tracking-wider mb-1">Inclus gratuitement</p>
-            <p className="font-semibold text-sm mb-0.5">Kit Ruban LED Encastré — OFFERT !</p>
+            <p className="font-semibold text-sm mb-0.5">
+              <a
+                href="/product/recessed-led-strip-lighting-fr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 text-white hover:text-emerald-200"
+              >
+                Kit Ruban LED Encastré
+              </a>{" "}
+              — OFFERT !
+            </p>
             <p className="text-emerald-100 opacity-90">
               8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; — 2 de chaque), driver LED premium, variateur tactile 10–100%, lumière blanche chaude 3000K. Valeur : €49,00.
             </p>
@@ -256,7 +293,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Commander Maintenant — €{selectedFr.price.toFixed(2).replace(".", ",")}
+          Commander Maintenant €{(selectedFr.ledFree ? selectedFr.price : selectedFr.original).toFixed(2).replace(".", ",")}
         </button>
 
         {/* Reassurance line */}
