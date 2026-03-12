@@ -19,12 +19,12 @@ interface AddToCartButtonProps {
   isEnglishFlexibleAcoustic?: boolean
 }
 
-// FR upsell quantity options
+// FR upsell quantity options — minimum 6 panels (4 tiers: 6 / 8 / 10 / 12)
 const frQuantities = [
-  { qty: 1, price: 15.44, label: "1 Panneau", badge: null, savings: null, freeShipping: false },
-  { qty: 2, price: 28.00, label: "2 Panneaux", badge: null, savings: "€2,88", freeShipping: false },
-  { qty: 4, price: 54.00, label: "4 Panneaux", badge: "Le Plus Populaire", savings: "€7,76", freeShipping: true },
-  { qty: 6, price: 80.00, label: "6 Panneaux", badge: "Meilleure Valeur", savings: "€12,64", freeShipping: true },
+  { qty: 6,  price: 199.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€10,40", freeShipping: true, ledFree: false },
+  { qty: 8,  price: 259.00, original: 279.20, label: "8 Panneaux",  badge: null,               savings: "€20,20", freeShipping: true, ledFree: false },
+  { qty: 10, price: 319.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€30,00", freeShipping: true, ledFree: false },
+  { qty: 12, price: 379.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro ⚡",      savings: "€39,80", freeShipping: true, ledFree: true  },
 ]
 
 // EN upsell quantity options for Flexible Acoustic Panel
@@ -39,8 +39,8 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   const { addItem, items } = useCart()
   const router = useRouter()
 
-  // FR: default to 4 panels option (index 2)
-  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[2])
+  // FR: default to 6 panels option (index 0 — minimum)
+  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[0])
   // EN Flexible Acoustic: default to 4 panels option (index 2)
   const [selectedQtyOptionEn, setSelectedQtyOptionEn] = useState(enQuantities[2])
   // Non-FR/EN flexible: simple quantity
@@ -175,50 +175,77 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
   // French version: upsell quantity selector + orange CTA button
   if (isFrenchVersion) {
+    const selectedFr = selectedQtyOptionFr
     return (
       <div className="flex flex-col gap-3 w-full">
         {/* Quantity upsell cards */}
         <div className="space-y-2">
           {frQuantities.map((option) => {
-            const isSelected = selectedQtyOption.qty === option.qty
+            const isSelected = selectedFr.qty === option.qty
             return (
               <button
                 key={option.qty}
                 type="button"
-                onClick={() => setSelectedQtyOption(option)}
-                className={`w-full rounded-lg border-2 px-4 py-3 transition-all ${
+                onClick={() => setSelectedQtyOptionFr(option)}
+                className={`w-full rounded-lg border-2 px-4 py-3 transition-all text-left ${
                   isSelected
                     ? "border-[#FF6B00] bg-orange-50"
                     : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
               >
-                <div className="flex items-center justify-between gap-3 mb-2">
-                  <div className="flex items-center gap-2">
+                {/* Top row: label + badge + price */}
+                <div className="flex items-center justify-between gap-3 mb-1.5">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-semibold text-gray-900">{option.label}</span>
                     {option.badge && (
-                      <span className={`text-white text-[10px] font-bold px-2.5 py-1 rounded-full ${
-                        option.badge === "Le Plus Populaire" ? "bg-green-600" : "bg-amber-600"
+                      <span className={`text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                        option.badge.startsWith("Pack Pro") ? "bg-purple-600" : "bg-amber-600"
                       }`}>
                         {option.badge}
                       </span>
                     )}
+                    {option.ledFree && (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-700 text-emerald-100">
+                        Kit LED OFFERT
+                      </span>
+                    )}
                   </div>
-                  <span className="text-sm font-bold text-gray-900">€{option.price.toFixed(2)}</span>
+                  <div className="flex flex-col items-end flex-shrink-0">
+                    <span className="text-xs text-gray-400 line-through">€{option.original.toFixed(2).replace(".", ",")}</span>
+                    <span className="text-sm font-bold text-gray-900">€{option.price.toFixed(2).replace(".", ",")}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  {option.savings ? (
-                    <span className="text-green-700 font-medium">Économisez {option.savings}</span>
-                  ) : (
-                    <span></span>
-                  )}
-                  {option.freeShipping && (
-                    <span className="text-green-700 font-medium">Livraison gratuite incluse !</span>
-                  )}
+                {/* Bottom row: savings + free shipping */}
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="text-green-700 font-medium">Économisez {option.savings}</span>
+                  <span className="text-green-700 font-medium">Livraison gratuite</span>
                 </div>
               </button>
             )
           })}
         </div>
+
+        {/* LED kit nudge — shown only when pack of 12 is NOT selected */}
+        {!selectedFr.ledFree && (
+          <div className="flex items-start gap-2 rounded-lg border border-dashed border-amber-400 bg-amber-50 px-3 py-2.5 text-xs text-gray-700">
+            <span className="text-base leading-none flex-shrink-0">💡</span>
+            <span>
+              Passez à <strong className="text-[#FF6B00]">12 Panneaux</strong> et recevez le{" "}
+              <strong>Kit Ruban LED Encastré (valeur €49,00) OFFERT</strong> — éclairage parfait inclus.
+            </span>
+          </div>
+        )}
+
+        {/* LED kit banner — shown only when pack of 12 is selected */}
+        {selectedFr.ledFree && (
+          <div className="rounded-lg bg-emerald-800 text-white px-4 py-3 text-xs leading-relaxed">
+            <p className="font-bold text-emerald-200 text-[10px] uppercase tracking-wider mb-1">Inclus gratuitement</p>
+            <p className="font-semibold text-sm mb-0.5">Kit Ruban LED Encastré — OFFERT !</p>
+            <p className="text-emerald-100 opacity-90">
+              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; — 2 de chaque), driver LED premium, variateur tactile 10–100%, lumière blanche chaude 3000K. Valeur : €49,00.
+            </p>
+          </div>
+        )}
 
         {/* Orange CTA button */}
         <button
@@ -229,12 +256,12 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Commander Maintenant €{selectedQtyOption.price.toFixed(2)}
+          Commander Maintenant — €{selectedFr.price.toFixed(2).replace(".", ",")}
         </button>
 
         {/* Reassurance line */}
         <p className="text-center text-xs text-gray-500">
-          Paiement 100% Sécurisé &nbsp;|&nbsp; Livraison Gratuite dès 80€
+          Paiement 100% Sécurisé &nbsp;|&nbsp; Livraison Gratuite incluse
         </p>
       </div>
     )
