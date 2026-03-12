@@ -40,16 +40,20 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
     }
   }, [])
 
-  // Swipe on main image area
+  // Swipe on main image area — disabled when video is selected
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (isVideoSelected) return
     touchStartX.current = e.touches[0].clientX
-  }, [])
+    touchEndX.current = e.touches[0].clientX // reset so a tap never triggers swipe
+  }, [isVideoSelected])
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (isVideoSelected) return
     touchEndX.current = e.touches[0].clientX
-  }, [])
+  }, [isVideoSelected])
 
   const handleTouchEnd = useCallback(() => {
+    if (isVideoSelected) return
     const diff = touchStartX.current - touchEndX.current
     const threshold = 50
     if (Math.abs(diff) > threshold) {
@@ -61,7 +65,7 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
         setIsVideoPlaying(false)
       }
     }
-  }, [selectedIndex, totalItems])
+  }, [isVideoSelected, selectedIndex, totalItems])
 
   const handleSelectIndex = useCallback((index: number) => {
     setSelectedIndex(index)
@@ -97,6 +101,7 @@ export function ProductGallery({ images, productName, video }: ProductGalleryPro
               <button
                 type="button"
                 onClick={handlePlayVideo}
+                onTouchEnd={(e) => { e.stopPropagation(); handlePlayVideo() }}
                 className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity hover:bg-black/30"
                 aria-label="Play video"
               >
