@@ -24,6 +24,8 @@ import { CountdownTimerFr } from "@/components/countdown-timer-fr"
 import { ExitIntentPopupFr } from "@/components/exit-intent-popup-fr"
 import { CountdownTimer } from "@/components/countdown-timer"
 import { ExitIntentPopup } from "@/components/exit-intent-popup"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 interface ClientProductPageProps {
   product: any
@@ -105,6 +107,27 @@ export default function ClientProductPage({
   const { addItem, totalItems } = useCart()
   const { opacity, isVisible } = useScrollVisibility()
   const [showStickyCta, setShowStickyCta] = useState(false)
+  const { toast } = useToast()
+  const router = useRouter()
+
+  // FR Order Summary state — shows after "Commander Maintenant" is clicked
+  const [frOrderData, setFrOrderData] = useState<{ qty: number; price: number; totalPrice: number; ledFree: boolean } | null>(null)
+
+  // FR: callback when item is added to cart — show toast + scroll to Order Summary
+  const handleFrAddedToCart = (orderData: { qty: number; price: number; totalPrice: number; ledFree: boolean }) => {
+    setFrOrderData(orderData)
+    toast({
+      title: "Produit ajouté !",
+      description: "Finalisez votre commande ci-dessous",
+    })
+    // Scroll to Order Summary after a small delay
+    setTimeout(() => {
+      const orderSummary = document.getElementById("order-summary-fr")
+      if (orderSummary) {
+        orderSummary.scrollIntoView({ behavior: "smooth", block: "start" })
+      }
+    }, 100)
+  }
   
   // Sticky CTA: show when main CTA button scrolls out of view (for FR or EN Flexible Acoustic)
   useEffect(() => {
@@ -378,6 +401,7 @@ export default function ClientProductPage({
                 product={product} 
                 isFrenchVersion={isFrenchVersion} 
                 isEnglishFlexibleAcoustic={!isFrenchVersion && isFlexibleAcousticPanel}
+                onAddedToCart={isFrenchVersion ? handleFrAddedToCart : undefined}
               />
               {isFrenchVersion && (
                 <p className="text-center text-xs text-muted-foreground">
@@ -557,6 +581,92 @@ export default function ClientProductPage({
   {/* Customer Reviews Section */}
   {isFlexibleAcousticPanel && <CustomerReviews isFrench={isFrenchVersion} />}
 
+        {/* FR Order Summary — appears after Commander Maintenant is clicked */}
+        {isFrenchVersion && frOrderData && (
+          <section 
+            id="order-summary-fr" 
+            className="mt-12 sm:mt-16 scroll-mt-8 border-2 border-[#FF6B00] rounded-xl bg-orange-50/50 p-6 sm:p-8"
+          >
+            <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">Récapitulatif de Votre Commande</h2>
+            
+            {/* Product summary */}
+            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-orange-200">
+              <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-white flex-shrink-0 border border-orange-200">
+                <Image
+                  src={product.images?.[0] || product.image || "/placeholder.svg"}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-base">{product.name}</p>
+                <p className="text-sm text-muted-foreground">Qté : {frOrderData.qty}</p>
+              </div>
+              <p className="text-lg font-bold">€{frOrderData.totalPrice.toFixed(2).replace(".", ",")}</p>
+            </div>
+
+            {/* LED kit bonus — only for 12 panels */}
+            {frOrderData.ledFree && (
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-orange-200 bg-emerald-50 rounded-lg p-3 -mx-3">
+                <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0 border border-emerald-300">
+                  <Image
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LED0101-NcQN4b3GARfX7EQhQSIcnMbQB9NsFa.jpg"
+                    alt="Kit Ruban LED Encastré"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-emerald-800">Kit Ruban LED Encastré</p>
+                  <p className="text-xs text-emerald-700">Bonus Pack Pro — OFFERT</p>
+                </div>
+                <p className="text-sm font-semibold text-emerald-700 line-through opacity-60">€49,00</p>
+              </div>
+            )}
+
+            {/* Guarantees */}
+            <div className="grid grid-cols-2 gap-3 mb-6 text-xs sm:text-sm">
+              <div className="flex items-center gap-2">
+                <Truck className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>Livraison Gratuite</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <RotateCcw className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>Retour sous 30 jours</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>Paiement 100% Sécurisé</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>Garantie 2 ans</span>
+              </div>
+            </div>
+
+            {/* Total */}
+            <div className="flex items-center justify-between mb-6 pt-4 border-t border-orange-200">
+              <span className="text-lg font-bold">Total</span>
+              <span className="text-2xl font-bold text-[#FF6B00]">€{frOrderData.totalPrice.toFixed(2).replace(".", ",")}</span>
+            </div>
+
+            {/* CTA Button */}
+            <button
+              type="button"
+              onClick={() => router.push("/checkout-fr")}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-lg py-4 px-8 transition-colors duration-200 shadow-lg"
+            >
+              <Shield className="h-5 w-5 flex-shrink-0" />
+              Finaliser Ma Commande
+            </button>
+            <p className="text-center text-xs text-muted-foreground mt-3">
+              Paiement SSL sécurisé • Visa, Mastercard, American Express
+            </p>
+          </section>
+        )}
+
         {/* Recessed LED Strip Section */}
         {isRecessedLedStrip && <RecessedLedSection />}
 
@@ -595,11 +705,18 @@ export default function ClientProductPage({
             type="button"
             onClick={() => {
               if (isFrenchVersion) {
-                // FR: scroll to the add-to-cart section so the user can confirm the pack
-                const addButton = document.querySelector("[data-add-to-cart]") as HTMLElement
-                if (addButton) {
-                  addButton.scrollIntoView({ behavior: "smooth", block: "center" })
-                  addButton.click()
+                // FR: if Order Summary already visible, scroll to it; otherwise click the add button
+                if (frOrderData) {
+                  const orderSummary = document.getElementById("order-summary-fr")
+                  if (orderSummary) {
+                    orderSummary.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                } else {
+                  const addButton = document.querySelector("[data-add-to-cart]") as HTMLElement
+                  if (addButton) {
+                    addButton.scrollIntoView({ behavior: "smooth", block: "center" })
+                    addButton.click()
+                  }
                 }
               } else {
                 const addButton = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
@@ -611,7 +728,9 @@ export default function ClientProductPage({
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 transition-colors shadow-lg"
           >
             <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-            {isFrenchVersion ? "Commander Maintenant" : "Order Now — £60.00"}
+            {isFrenchVersion 
+              ? (frOrderData ? "Finaliser Ma Commande" : "Commander Maintenant") 
+              : "Order Now — £60.00"}
           </button>
           <p className="text-center text-[10px] text-muted-foreground mt-1.5">
             {isFrenchVersion ? "Paiement 100% Sécurisé • Livraison 5-8 jours" : "100% Secure Payment • Delivery 5-8 days"}

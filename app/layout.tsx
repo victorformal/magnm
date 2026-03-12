@@ -9,6 +9,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { MetaPixelProvider } from "@/components/meta-pixel-provider"
 import { ScrollToTop } from "@/components/scroll-to-top"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 const _inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -140,6 +141,7 @@ export default function RootLayout({
             </CartProvider>
           </MetaPixelProvider>
         </Suspense>
+        <Toaster />
         <Analytics />
       </body>
     </html>
