@@ -1,6 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useCart } from "@/lib/cart-context"
+import { useRouter } from "next/navigation"
+import { ShoppingCart, Lock } from "lucide-react"
 
 interface StickyCartBarFrProps {
   selectedPrice?: number
@@ -9,6 +12,9 @@ interface StickyCartBarFrProps {
 
 export function StickyCartBarFr({ selectedPrice = 59, originalPrice = 69.8 }: StickyCartBarFrProps) {
   const [visible, setVisible] = useState(false)
+  const { totalItems, totalPrice } = useCart()
+  const router = useRouter()
+  const hasItemsInCart = totalItems > 0
 
   useEffect(() => {
     const heroBottom = document.querySelector("[data-add-to-cart]")
@@ -21,11 +27,15 @@ export function StickyCartBarFr({ selectedPrice = 59, originalPrice = 69.8 }: St
     return () => observer.disconnect()
   }, [])
 
-  const handleClick = () => {
+  const handleChoosePack = () => {
     const addButton = document.querySelector("[data-add-to-cart]") as HTMLElement
     if (addButton) {
       addButton.scrollIntoView({ behavior: "smooth", block: "center" })
     }
+  }
+
+  const handleFinishOrder = () => {
+    router.push("/checkout-fr")
   }
 
   return (
@@ -36,26 +46,58 @@ export function StickyCartBarFr({ selectedPrice = 59, originalPrice = 69.8 }: St
       style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
     >
       <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-4 flex-wrap">
-        {/* Info - hidden on mobile */}
-        <div className="hidden sm:flex flex-col gap-0.5">
-          <span className="text-sm font-medium text-[#FAF7F2]">Panneau Acoustique Flexible</span>
-          <span className="text-xs text-[#FAF7F2]/60">4.9 sur 2847 avis</span>
-        </div>
+        {hasItemsInCart ? (
+          <>
+            {/* Cart has items - show finalize order */}
+            <div className="hidden sm:flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#C8522A]/20">
+                <ShoppingCart className="w-5 h-5 text-[#C8522A]" />
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm font-medium text-[#FAF7F2]">{totalItems} article{totalItems > 1 ? "s" : ""} dans votre panier</span>
+                <span className="text-xs text-[#FAF7F2]/60">Prêt à être expédié</span>
+              </div>
+            </div>
 
-        {/* Price */}
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-[#FAF7F2]">À partir de {selectedPrice} EUR</span>
-          <span className="text-sm text-[#FAF7F2]/50 line-through">{originalPrice.toFixed(2)} EUR</span>
-        </div>
+            {/* Total price */}
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-bold text-[#FAF7F2]">Total : {totalPrice.toFixed(2).replace(".", ",")} EUR</span>
+            </div>
 
-        {/* CTA */}
-        <button
-          type="button"
-          onClick={handleClick}
-          className="px-6 py-2.5 bg-[#C8522A] text-white rounded-lg text-sm font-medium whitespace-nowrap hover:bg-[#A8421A] active:scale-[0.97] transition-all flex-1 sm:flex-none text-center"
-        >
-          Choisir mon pack
-        </button>
+            {/* Finalize CTA */}
+            <button
+              type="button"
+              onClick={handleFinishOrder}
+              className="px-6 py-2.5 bg-[#22C55E] text-white rounded-lg text-sm font-medium whitespace-nowrap hover:bg-[#16A34A] active:scale-[0.97] transition-all flex-1 sm:flex-none text-center flex items-center justify-center gap-2"
+            >
+              <Lock className="w-4 h-4" />
+              Finaliser ma commande
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Cart is empty - show choose pack */}
+            <div className="hidden sm:flex flex-col gap-0.5">
+              <span className="text-sm font-medium text-[#FAF7F2]">Panneau Acoustique Flexible</span>
+              <span className="text-xs text-[#FAF7F2]/60">4.9 sur 2847 avis</span>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-bold text-[#FAF7F2]">À partir de {selectedPrice} EUR</span>
+              <span className="text-sm text-[#FAF7F2]/50 line-through">{originalPrice.toFixed(2)} EUR</span>
+            </div>
+
+            {/* CTA */}
+            <button
+              type="button"
+              onClick={handleChoosePack}
+              className="px-6 py-2.5 bg-[#C8522A] text-white rounded-lg text-sm font-medium whitespace-nowrap hover:bg-[#A8421A] active:scale-[0.97] transition-all flex-1 sm:flex-none text-center"
+            >
+              Choisir mon pack
+            </button>
+          </>
+        )}
       </div>
     </div>
   )
