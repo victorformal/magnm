@@ -76,7 +76,7 @@ export function PanelCalculatorFr({ onSelectBundle }: PanelCalculatorFrProps) {
         Combien de panneaux pour votre mur?
       </h2>
       <p className="text-sm text-[#6B5B4E] mb-6">
-        Entrez les dimensions de votre mur — nous calculons la quantite exacte, avec marge de securite.
+        Entrez les dimensions de votre mur. Nous calculons la quantité exacte, avec marge de sécurité.
       </p>
 
       {/* Inputs */}
@@ -121,7 +121,7 @@ export function PanelCalculatorFr({ onSelectBundle }: PanelCalculatorFrProps) {
       {/* Coverage */}
       <div className="mb-6">
         <label className="block text-xs font-medium text-[#6B5B4E] mb-2">
-          Pourcentage du mur a couvrir
+          Pourcentage du mur à couvrir
         </label>
         <div className="flex gap-2 flex-wrap">
           {[25, 50, 75, 100].map((pct) => (
@@ -147,7 +147,7 @@ export function PanelCalculatorFr({ onSelectBundle }: PanelCalculatorFrProps) {
         onClick={handleCalculate}
         className="w-full py-3.5 bg-[#2C1810] text-white rounded-xl text-base font-medium hover:bg-[#4A2818] active:scale-[0.98] transition-all"
       >
-        Calculer ma quantite
+        Calculer ma quantité
       </button>
 
       {/* Result */}
@@ -156,9 +156,9 @@ export function PanelCalculatorFr({ onSelectBundle }: PanelCalculatorFrProps) {
           {/* Main result */}
           <div className="text-center pb-4 border-b border-[#F0EAE0] mb-4">
             <div className="text-5xl font-bold text-[#C8522A] leading-none">{result.withBuffer}</div>
-            <div className="text-sm font-medium text-[#2C1810] mt-1">panneaux recommandes</div>
+            <div className="text-sm font-medium text-[#2C1810] mt-1">panneaux recommandés</div>
             <div className="text-xs text-[#8B7B70] mt-1">
-              ({result.panels} pour la surface + {result.withBuffer - result.panels} de reserve pour les decoupes)
+              ({result.panels} pour la surface + {result.withBuffer - result.panels} de réserve pour les découpes)
             </div>
           </div>
 
@@ -170,7 +170,7 @@ export function PanelCalculatorFr({ onSelectBundle }: PanelCalculatorFrProps) {
             </div>
             <div className="flex flex-col items-center p-2.5 bg-[#FAF7F2] rounded-lg">
               <span className="text-base font-bold text-[#2C1810]">Pack {result.bundleRecommended}</span>
-              <span className="text-[10px] text-[#8B7B70] text-center">pack recommande</span>
+              <span className="text-[10px] text-[#8B7B70] text-center">pack recommandé</span>
             </div>
             <div className="flex flex-col items-center p-2.5 bg-[#FFF1EB] rounded-lg">
               <span className="text-base font-bold text-[#C8522A]">{result.price} EUR</span>
@@ -184,11 +184,11 @@ export function PanelCalculatorFr({ onSelectBundle }: PanelCalculatorFrProps) {
             onClick={handleSelectBundle}
             className="w-full py-3.5 bg-[#C8522A] text-white rounded-xl text-base font-medium hover:bg-[#A8421A] active:scale-[0.98] transition-all mb-3"
           >
-            Selectionner le Pack {result.bundleRecommended} {result.price} EUR
+            Sélectionner le Pack {result.bundleRecommended} {result.price} EUR
           </button>
 
           <p className="text-[11px] text-[#8B7B70] text-center">
-            +10% de marge incluse pour les chutes de decoupe. Retours gratuits si vous en commandez trop.
+            +10% de marge incluse pour les chutes de découpe. Retours gratuits si vous en commandez trop.
           </p>
         </div>
       )}

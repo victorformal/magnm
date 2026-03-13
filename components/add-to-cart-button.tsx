@@ -28,7 +28,7 @@ const frQuantities = [
   { qty: 6,  price: 179.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€30,40", freeShipping: true,  ledFree: false, coverage: "~18 m²", ideal: "Mur entier standard" },
   { qty: 8,  price: 229.00, original: 279.20, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€50,20", freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
   { qty: 10, price: 279.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€70,00", freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
-  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complete" },
+  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
 ]
 
 // EN upsell quantity options for Flexible Acoustic Panel
@@ -249,11 +249,11 @@ export function AddToCartButton({ product, variant = "default", className, isFre
                 </div>
                 {/* Coverage info */}
                 <div className="text-[11px] text-gray-500 mb-1">
-                  {option.coverage} | Ideal pour: {option.ideal}
+                  {option.coverage} | Idéal pour : {option.ideal}
                 </div>
                 {/* Bottom row: savings + free shipping */}
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="text-green-700 font-medium">Economisez {option.savings}</span>
+                  <span className="text-green-700 font-medium">Économisez {option.savings}</span>
                   {option.freeShipping && <span className="text-green-700 font-medium">Livraison gratuite</span>}
                 </div>
               </button>
@@ -275,7 +275,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
               >
                 Kit Ruban LED Encastré
               </a>{" "}
-              (valeur €49,00) <strong>OFFERT</strong> eclairage parfait inclus.
+              (valeur €49,00) <strong>OFFERT</strong> éclairage parfait inclus.
             </span>
           </div>
         )}
@@ -315,12 +315,12 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
         {/* Price per panel anchor */}
         <p className="text-center text-xs text-gray-600">
-          soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Economisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs piece unique
+          soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Économisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs pièce unique
         </p>
 
         {/* Trust signals row */}
         <div className="flex items-center justify-center gap-4 flex-wrap text-[11px] text-gray-500">
-          <span className="flex items-center gap-1">🔒 Paiement securise</span>
+          <span className="flex items-center gap-1">🔒 Paiement sécurisé</span>
           <span className="flex items-center gap-1">🚚 Livraison gratuite</span>
           <span className="flex items-center gap-1">↩ Retour 30j gratuit</span>
           <span className="flex items-center gap-1">🛡 Garantie 5 ans</span>

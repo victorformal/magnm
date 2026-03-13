@@ -5,28 +5,28 @@ import { Plus } from "lucide-react"
 
 const FAQS = [
   {
-    q: "Est-ce que ca tient vraiment sur un mur courbe ou une colonne?",
-    a: "Oui — c'est sa conception principale. Le feutre acoustique de 5mm au dos permet une flexibilite jusqu'a un rayon de 20cm. Des clients l'ont installe sur des colonnes de 18cm de diametre et des arches. Photos disponibles dans les avis ci-dessous.",
+    q: "Est-ce que ça tient vraiment sur un mur courbe ou une colonne ?",
+    a: "Oui, c'est sa conception principale. Le feutre acoustique de 5mm au dos permet une flexibilité jusqu'à un rayon de 20cm. Des clients l'ont installé sur des colonnes de 18cm de diamètre et des arches. Photos disponibles dans les avis ci-dessous.",
   },
   {
-    q: "De quoi ai-je besoin pour installer? Faut-il un artisan?",
-    a: "Un cutter et une regle. C'est tout. L'adhesif est pre-applique et repositionnable pendant 48h. 94% de nos clients posent seuls, sans experience prealable de renovation. Temps moyen : 25 minutes par panneau.",
+    q: "De quoi ai-je besoin pour installer ? Faut-il un artisan ?",
+    a: "Un cutter et une règle. C'est tout. L'adhésif est pré-appliqué et repositionnable pendant 48h. 94% de nos clients posent seuls, sans expérience préalable de rénovation. Temps moyen : 25 minutes par panneau.",
   },
   {
-    q: "Que se passe-t-il si je commande trop de panneaux?",
-    a: "Les retours sont gratuits sous 30 jours pour les panneaux non decoupes. Notre calculateur inclut 10% de marge pour les chutes — vous pouvez aussi en commander l'exact minimum et revenir pour completer si besoin.",
+    q: "Que se passe-t-il si je commande trop de panneaux ?",
+    a: "Les retours sont gratuits sous 30 jours pour les panneaux non découpés. Notre calculateur inclut 10% de marge pour les chutes. Vous pouvez aussi en commander l'exact minimum et revenir pour compléter si besoin.",
   },
   {
-    q: "Est-ce du vrai bois ou un revetement plastique?",
-    a: "Vrai bois. Les lames sont en MDF massif avec finition bois veritable — vous pouvez le poncer et le teindre comme n'importe quel bois. Aucun film PVC, aucun papier bois.",
+    q: "Est-ce du vrai bois ou un revêtement plastique ?",
+    a: "Vrai bois. Les lames sont en MDF massif avec finition bois véritable. Vous pouvez le poncer et le teindre comme n'importe quel bois. Aucun film PVC, aucun papier bois.",
   },
   {
-    q: "Le panneau tient-il dans les pieces humides (salle de bain, cuisine)?",
-    a: "Oui pour une utilisation normale — plusieurs clients l'ont installe en salle de bain et au-dessus de plans de travail. Il ne faut pas l'exposer a de l'eau courante ou a la vapeur directe.",
+    q: "Le panneau tient-il dans les pièces humides (salle de bain, cuisine) ?",
+    a: "Oui pour une utilisation normale. Plusieurs clients l'ont installé en salle de bain et au-dessus de plans de travail. Il ne faut pas l'exposer à de l'eau courante ou à la vapeur directe.",
   },
   {
-    q: "Quand vais-je recevoir ma commande?",
-    a: "Expedition sous 24-48h, livraison en 5 a 8 jours ouvrables en France metropolitaine. Vous recevez un email de suivi des l'expedition. La livraison est gratuite sur toutes les commandes.",
+    q: "Quand vais-je recevoir ma commande ?",
+    a: "Expédition sous 24-48h, livraison en 5 à 8 jours ouvrables en France métropolitaine. Vous recevez un email de suivi dès l'expédition. La livraison est gratuite sur toutes les commandes.",
   },
 ]
 
@@ -39,7 +39,7 @@ export function FAQSectionFr() {
 
   return (
     <section className="my-12 sm:my-16">
-      <h2 className="text-xl sm:text-2xl font-bold text-[#2C1810] mb-6">Questions frequentes</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-[#2C1810] mb-6">Questions fréquentes</h2>
 
       <div className="divide-y divide-[#E8DDD4]">
         {FAQS.map((faq, index) => (
