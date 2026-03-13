@@ -40,6 +40,21 @@ div {
   max-width: 100%;
 }
 
+/* WOODBOIS FR conversion page color palette */
+:root {
+  --color-wood-dark: #2C1810;
+  --color-wood-mid: #8B4513;
+  --color-wood-warm: #D4956A;
+  --color-cream: #FAF7F2;
+  --color-cream-dark: #F0EAE0;
+  --color-charcoal: #1A1A1A;
+  --color-success: #2D6A4F;
+  --color-cta: #C8522A;
+  --color-cta-hover: #A8421A;
+  --color-muted-wood: #6B5B4E;
+  --color-border-wood: #E8DDD4;
+}
+
 /* WOOD SHOP premium color palette - sophisticated cream/charcoal with warm accents */
 :root {
   --background: oklch(0.97 0.006 80);
