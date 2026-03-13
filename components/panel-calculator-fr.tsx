@@ -184,7 +184,7 @@ export function PanelCalculatorFr({ onSelectBundle }: PanelCalculatorFrProps) {
             onClick={handleSelectBundle}
             className="w-full py-3.5 bg-[#C8522A] text-white rounded-xl text-base font-medium hover:bg-[#A8421A] active:scale-[0.98] transition-all mb-3"
           >
-            Selectionner le Pack {result.bundleRecommended} — {result.price} EUR
+            Selectionner le Pack {result.bundleRecommended} {result.price} EUR
           </button>
 
           <p className="text-[11px] text-[#8B7B70] text-center">

@@ -7,7 +7,7 @@ interface StickyCartBarFrProps {
   originalPrice?: number
 }
 
-export function StickyCartBarFr({ selectedPrice = 179, originalPrice = 209.4 }: StickyCartBarFrProps) {
+export function StickyCartBarFr({ selectedPrice = 59, originalPrice = 69.8 }: StickyCartBarFrProps) {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -39,12 +39,12 @@ export function StickyCartBarFr({ selectedPrice = 179, originalPrice = 209.4 }: 
         {/* Info - hidden on mobile */}
         <div className="hidden sm:flex flex-col gap-0.5">
           <span className="text-sm font-medium text-[#FAF7F2]">Panneau Acoustique Flexible</span>
-          <span className="text-xs text-[#FAF7F2]/60">4.9 - 2847 avis</span>
+          <span className="text-xs text-[#FAF7F2]/60">4.9 sur 2847 avis</span>
         </div>
 
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-[#FAF7F2]">a partir de {selectedPrice} EUR</span>
+          <span className="text-lg font-bold text-[#FAF7F2]">À partir de {selectedPrice} EUR</span>
           <span className="text-sm text-[#FAF7F2]/50 line-through">{originalPrice.toFixed(2)} EUR</span>
         </div>
 

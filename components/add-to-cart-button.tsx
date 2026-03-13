@@ -249,7 +249,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
                 </div>
                 {/* Coverage info */}
                 <div className="text-[11px] text-gray-500 mb-1">
-                  {option.coverage} - Ideal pour: {option.ideal}
+                  {option.coverage} | Ideal pour: {option.ideal}
                 </div>
                 {/* Bottom row: savings + free shipping */}
                 <div className="flex items-center gap-3 text-xs">
@@ -275,7 +275,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
               >
                 Kit Ruban LED Encastré
               </a>{" "}
-              (valeur €49,00) <strong>OFFERT</strong> — éclairage parfait inclus.
+              (valeur €49,00) <strong>OFFERT</strong> eclairage parfait inclus.
             </span>
           </div>
         )}
@@ -293,7 +293,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
               >
                 Kit Ruban LED Encastré
               </a>{" "}
-              — OFFERT !
+              OFFERT !
             </p>
             <p className="text-emerald-100 opacity-90">
               8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; — 2 de chaque), driver LED premium, variateur tactile 10–100%, lumière blanche chaude 3000K. Valeur : €49,00.
@@ -310,12 +310,12 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Transformer mes {selectedFr.coverage} — {selectedFr.price.toFixed(0)} EUR
+          Transformer mes {selectedFr.coverage} {selectedFr.price.toFixed(0)} EUR
         </button>
 
         {/* Price per panel anchor */}
         <p className="text-center text-xs text-gray-600">
-          soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau — Economisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs piece unique
+          soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Economisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs piece unique
         </p>
 
         {/* Trust signals row */}
