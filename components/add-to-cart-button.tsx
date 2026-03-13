@@ -24,11 +24,11 @@ interface AddToCartButtonProps {
 // FR upsell quantity options — base price €34,90/panneau
 // original = qty × 34.90 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 2,  price: 59.00,  original: 69.80,  label: "2 Panneaux",  badge: null,               savings: "€10,80", freeShipping: false, ledFree: false },
-  { qty: 6,  price: 179.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€30,40", freeShipping: true,  ledFree: false },
-  { qty: 8,  price: 229.00, original: 279.20, label: "8 Panneaux",  badge: null,               savings: "€50,20", freeShipping: true,  ledFree: false },
-  { qty: 10, price: 279.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€70,00", freeShipping: true,  ledFree: false },
-  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true,  ledFree: true  },
+  { qty: 2,  price: 59.00,  original: 69.80,  label: "2 Panneaux",  badge: null,               savings: "€10,80", freeShipping: false, ledFree: false, coverage: "~6 m²",  ideal: "Coin TV ou colonne" },
+  { qty: 6,  price: 179.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€30,40", freeShipping: true,  ledFree: false, coverage: "~18 m²", ideal: "Mur entier standard" },
+  { qty: 8,  price: 229.00, original: 279.20, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€50,20", freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
+  { qty: 10, price: 279.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€70,00", freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
+  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complete" },
 ]
 
 // EN upsell quantity options for Flexible Acoustic Panel
@@ -247,10 +247,14 @@ export function AddToCartButton({ product, variant = "default", className, isFre
                     <span className="text-sm font-bold text-gray-900">€{option.price.toFixed(2).replace(".", ",")}</span>
                   </div>
                 </div>
+                {/* Coverage info */}
+                <div className="text-[11px] text-gray-500 mb-1">
+                  {option.coverage} - Ideal pour: {option.ideal}
+                </div>
                 {/* Bottom row: savings + free shipping */}
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="text-green-700 font-medium">Économisez {option.savings}</span>
-                  <span className="text-green-700 font-medium">Livraison gratuite</span>
+                  <span className="text-green-700 font-medium">Economisez {option.savings}</span>
+                  {option.freeShipping && <span className="text-green-700 font-medium">Livraison gratuite</span>}
                 </div>
               </button>
             )
@@ -297,22 +301,30 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           </div>
         )}
 
-        {/* Orange CTA button */}
+        {/* Orange CTA button with dynamic copy */}
         <button
           type="button"
           disabled={!product.inStock}
           onClick={() => handleBuyNow()}
           data-add-to-cart="true"
-          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Commander Maintenant €{selectedFr.price.toFixed(2).replace(".", ",")}
+          Transformer mes {selectedFr.coverage} — {selectedFr.price.toFixed(0)} EUR
         </button>
 
-        {/* Reassurance line */}
-        <p className="text-center text-xs text-gray-500">
-          Paiement 100% Sécurisé &nbsp;|&nbsp; Livraison Gratuite incluse
+        {/* Price per panel anchor */}
+        <p className="text-center text-xs text-gray-600">
+          soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau — Economisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs piece unique
         </p>
+
+        {/* Trust signals row */}
+        <div className="flex items-center justify-center gap-4 flex-wrap text-[11px] text-gray-500">
+          <span className="flex items-center gap-1">🔒 Paiement securise</span>
+          <span className="flex items-center gap-1">🚚 Livraison gratuite</span>
+          <span className="flex items-center gap-1">↩ Retour 30j gratuit</span>
+          <span className="flex items-center gap-1">🛡 Garantie 5 ans</span>
+        </div>
       </div>
     )
   }

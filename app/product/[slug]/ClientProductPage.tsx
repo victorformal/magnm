@@ -26,6 +26,12 @@ import { CountdownTimer } from "@/components/countdown-timer"
 import { ExitIntentPopup } from "@/components/exit-intent-popup"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
+import { PanelCalculatorFr } from "@/components/panel-calculator-fr"
+import { StickyCartBarFr } from "@/components/sticky-cart-bar-fr"
+import { FAQSectionFr } from "@/components/faq-section-fr"
+import { StockUrgencyBarFr } from "@/components/stock-urgency-bar-fr"
+import { SocialProofInlineFr } from "@/components/social-proof-inline-fr"
+import { RatingBreakdownFr } from "@/components/rating-breakdown-fr"
 
 interface ClientProductPageProps {
   product: any
@@ -214,10 +220,17 @@ export default function ClientProductPage({
             {/* Title & Price */}
             <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-balance break-words">{product.name}</h1>
 
+            {/* FR: Benefit subheadline */}
+            {isFrenchVersion && isFlexibleAcousticPanel && (
+              <p className="text-sm sm:text-base text-muted-foreground mt-2 leading-relaxed">
+                Le seul panneau qui epouse vos courbes — sans outil, sans artisan, en 30 minutes
+              </p>
+            )}
+
             {isFlexibleAcousticPanel && (
               <div className="mt-2 flex flex-col gap-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm text-muted-foreground">4.8</span>
+                  <span className="text-sm text-muted-foreground">{isFrenchVersion ? "4.9" : "4.8"}</span>
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <svg key={i} className="h-4 w-4 text-amber-400 fill-current" viewBox="0 0 20 20">
@@ -225,12 +238,19 @@ export default function ClientProductPage({
                       </svg>
                     ))}
                   </div>
-                  <span className="text-sm text-sky-600 hover:text-sky-700 hover:underline cursor-pointer">(1080)</span>
+                  <span className="text-sm text-sky-600 hover:text-sky-700 hover:underline cursor-pointer">
+                    ({isFrenchVersion ? "2847 avis verifies" : "1080"})
+                  </span>
                 </div>
-                <p className="text-sm">
-                  <span className="font-semibold">{isFrenchVersion ? "4500+ achetes" : "4500+ bought"}</span>{" "}
-                  <span className="text-muted-foreground">{isFrenchVersion ? "le mois dernier" : "in past month"}</span>
-                </p>
+                {/* FR: Enhanced social proof badges */}
+                {isFrenchVersion ? (
+                  <SocialProofInlineFr />
+                ) : (
+                  <p className="text-sm">
+                    <span className="font-semibold">4500+ bought</span>{" "}
+                    <span className="text-muted-foreground">in past month</span>
+                  </p>
+                )}
               </div>
             )}
 
@@ -262,9 +282,13 @@ export default function ClientProductPage({
                   <Info className="h-3.5 w-3.5 text-muted-foreground cursor-pointer flex-shrink-0" />
                 </div>
                 {isFlexibleAcousticPanel && (
-                  <p className="text-xs text-muted-foreground mt-2">{isFrenchVersion ? "Offre de lancement limitée — Seulement quelques panneaux disponibles" : "Limited batch / Introductory offer — Only a few batches available"}</p>
+                  isFrenchVersion ? (
+                    <StockUrgencyBarFr />
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-2">Limited batch / Introductory offer — Only a few batches available</p>
+                  )
                 )}
-                {isFlexibleAcousticPanel && <PeopleViewing isFrench={isFrenchVersion} />}
+                {isFlexibleAcousticPanel && !isFrenchVersion && <PeopleViewing isFrench={isFrenchVersion} />}
               </div>
             ) : (
               <div className="mt-4">
@@ -318,7 +342,7 @@ export default function ClientProductPage({
                       <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
                         <span className="text-accent font-bold">3</span>
                       </div>
-                      <p className="text-xs font-medium">{isFrenchVersion ? "Profitez!" : "Enjoy!"}</p>
+                      <p className="text-xs font-medium">{isFrenchVersion ? "Admirez le resultat" : "Enjoy!"}</p>
                     </div>
                   </div>
                 </div>
@@ -487,6 +511,9 @@ export default function ClientProductPage({
               </div>
             )}
 
+            {/* Panel Calculator - FR only */}
+            {isFrenchVersion && isFlexibleAcousticPanel && <PanelCalculatorFr />}
+
             {/* Acoustic Line Section - Only for Flexible Acoustic Panel */}
             {isFlexibleAcousticPanel && (
               <div id="acoustic-line-section" className="scroll-mt-4">
@@ -582,8 +609,20 @@ export default function ClientProductPage({
         {/* Product Description Section */}
         {isFlexibleAcousticPanel && <ProductDescriptionSection />}
 
-  {/* Customer Reviews Section */}
-  {isFlexibleAcousticPanel && <CustomerReviews isFrench={isFrenchVersion} />}
+        {/* FAQ Section - FR only - before reviews */}
+        {isFrenchVersion && isFlexibleAcousticPanel && (
+          <div className="mx-auto max-w-4xl">
+            <FAQSectionFr />
+          </div>
+        )}
+
+        {/* Customer Reviews Section with Rating Breakdown for FR */}
+        {isFlexibleAcousticPanel && (
+          <div className="mt-12 sm:mt-16">
+            {isFrenchVersion && <RatingBreakdownFr />}
+            <CustomerReviews isFrench={isFrenchVersion} />
+          </div>
+        )}
 
         {/* FR Order Summary — appears after Commander Maintenant is clicked */}
         {isFrenchVersion && frOrderData && (
@@ -741,6 +780,9 @@ export default function ClientProductPage({
           </p>
         </div>
       )}
+
+      {/* Sticky Cart Bar for Desktop - FR only */}
+      {isFrenchVersion && isFlexibleAcousticPanel && <StickyCartBarFr />}
     </div>
   )
 }
