@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Playfair_Display, DM_Sans } from "next/font/google"
+import { Inter, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import Script from "next/script"
 import { Suspense } from "react"
@@ -14,7 +14,6 @@ import "./globals.css"
 
 const _inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const _playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" })
-const _dmSans = DM_Sans({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--font-dm-sans" })
 
 export const metadata: Metadata = {
   title: "WOOD SHOP | Premium Wood Slat Panels & Interior Design",
