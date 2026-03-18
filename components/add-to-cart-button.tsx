@@ -21,14 +21,14 @@ interface AddToCartButtonProps {
   onAddedToCart?: (orderData: { qty: number; price: number; totalPrice: number; ledFree: boolean }) => void
 }
 
-// FR upsell quantity options — base price €34,90/panneau
-// original = qty × 34.90 | pack price = discounted total | savings = original - pack
+// FR upsell quantity options — base price €14,90/panneau
+// original = qty × 14.90 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 2,  price: 59.00,  original: 69.80,  label: "2 Panneaux",  badge: null,               savings: "€10,80", freeShipping: false, ledFree: false, coverage: "~6 m²",  ideal: "Coin TV ou colonne" },
-  { qty: 6,  price: 179.00, original: 209.40, label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€30,40", freeShipping: true,  ledFree: false, coverage: "~18 m²", ideal: "Mur entier standard" },
-  { qty: 8,  price: 229.00, original: 279.20, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€50,20", freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
-  { qty: 10, price: 279.00, original: 349.00, label: "10 Panneaux", badge: null,               savings: "€70,00", freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
-  { qty: 12, price: 329.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€89,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
+  { qty: 2,  price: 24.90,  original: 29.80,  label: "2 Panneaux",  badge: null,               savings: "€4,90",   freeShipping: false, ledFree: false, coverage: "~6 m²",  ideal: "Coin TV ou colonne" },
+  { qty: 6,  price: 69.00,  original: 89.40,  label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€20,40",  freeShipping: true,  ledFree: false, coverage: "~18 m²", ideal: "Mur entier standard" },
+  { qty: 8,  price: 89.00,  original: 119.20, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€30,20",  freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
+  { qty: 10, price: 109.00, original: 149.00, label: "10 Panneaux", badge: null,               savings: "€40,00",  freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
+  { qty: 12, price: 249.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€169,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
 ]
 
 // EN upsell quantity options for Flexible Acoustic Panel

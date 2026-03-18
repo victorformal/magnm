@@ -13,11 +13,11 @@ interface CalcResult {
 const PANEL_AREA = 2.97 // 270cm x 110cm = 2.97 m²
 const BUNDLES = [2, 6, 8, 10, 12]
 const BUNDLE_PRICES: Record<number, number> = {
-  2: 59,
-  6: 179,
-  8: 229,
-  10: 279,
-  12: 329,
+  2: 24.90,
+  6: 69,
+  8: 89,
+  10: 109,
+  12: 249,
 }
 
 function getRecommendedBundle(panels: number): number {
