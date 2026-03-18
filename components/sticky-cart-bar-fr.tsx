@@ -10,7 +10,7 @@ interface StickyCartBarFrProps {
   originalPrice?: number
 }
 
-export function StickyCartBarFr({ selectedPrice = 59, originalPrice = 69.8 }: StickyCartBarFrProps) {
+export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }: StickyCartBarFrProps) {
   const [visible, setVisible] = useState(false)
   const { totalItems, totalPrice } = useCart()
   const router = useRouter()
