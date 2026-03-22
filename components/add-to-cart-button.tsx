@@ -164,9 +164,11 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
     // For FR/EN upsell, add the selected qty as a single cart entry with adjusted price
     const productToAdd = usePackages
-      ? { ...product, price: isFrenchVersion ? frEffectiveTotal / selectedQtyOptionFr.qty : selectedQtyOption.price / selectedQtyOption.qty }
+      ? { ...product, price: isFrenchVersion 
+          ? (isUsingCustomQtyFr ? FR_PRICE_PER_PANEL : frEffectiveTotal / selectedQtyOptionFr.qty) 
+          : selectedQtyOption.price / selectedQtyOption.qty }
       : product
-    addItem(productToAdd, qty)
+    addItem(productToAdd, qty as number)
 
     // FR: persist order in sessionStorage so /checkout-fr always has data
     if (isFrenchVersion) {
@@ -241,7 +243,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
             }`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">Quantité :</span>
+              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Quantité :</span>
               <div className="flex items-center border border-gray-300 rounded-md">
                 <button
                   type="button"
@@ -409,7 +411,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
           {isUsingCustomQty 
-            ? `Ajouter ${customQuantityFr} panneau${customQuantityFr > 1 ? 'x' : ''} — ${customTotal.toFixed(0)} EUR`
+            ? `Ajouter ${customQuantityFr} panneau${customQuantityFr > 1 ? 'x' : ''} ${customTotal.toFixed(0)} EUR`
             : `Transformer mes ${selectedFr.coverage} ${selectedFr.price.toFixed(0)} EUR`
           }
         </button>
