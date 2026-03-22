@@ -24,12 +24,13 @@ interface AddToCartButtonProps {
 // FR upsell quantity options — base price €14,90/panneau
 // original = qty × 14.90 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 2,  price: 24.90,  original: 29.80,  label: "2 Panneaux",  badge: null,               savings: "€4,90",   freeShipping: false, ledFree: false, coverage: "~6 m²",  ideal: "Coin TV ou colonne" },
-  { qty: 6,  price: 69.00,  original: 89.40,  label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€20,40",  freeShipping: true,  ledFree: false, coverage: "~18 m²", ideal: "Mur entier standard" },
   { qty: 8,  price: 89.00,  original: 119.20, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€30,20",  freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
   { qty: 10, price: 109.00, original: 149.00, label: "10 Panneaux", badge: null,               savings: "€40,00",  freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
   { qty: 12, price: 249.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€169,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
 ]
+
+// FR custom quantity: base price per panel
+const FR_PRICE_PER_PANEL = 14.90
 
 // EN upsell quantity options for Flexible Acoustic Panel
 const enQuantities = [
@@ -43,8 +44,10 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   const { addItem, items } = useCart()
   const router = useRouter()
 
-  // FR: default to 6 panels option (index 1)
-  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[1])
+  // FR: default to 8 panels option (index 0)
+  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[0])
+  // FR: custom quantity selector (null means using a package instead)
+  const [customQuantityFr, setCustomQuantityFr] = useState<number | null>(null)
   // EN Flexible Acoustic: default to 4 panels option (index 2)
   const [selectedQtyOptionEn, setSelectedQtyOptionEn] = useState(enQuantities[2])
   // Non-FR/EN flexible: simple quantity
@@ -72,13 +75,25 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
     const usePackages = isFrenchVersion || isEnglishFlexibleAcoustic
 
-    // FR: always use the discounted pack price (€179/€229/€279/€329)
-    const frEffectiveTotal = isFrenchVersion ? selectedQtyOptionFr.price : 0
+    // FR: check if using custom quantity or package
+    const isUsingCustomQtyFr = isFrenchVersion && customQuantityFr !== null
+    const frCustomTotal = isUsingCustomQtyFr ? customQuantityFr * FR_PRICE_PER_PANEL : 0
+    
+    // FR: use the discounted pack price or custom quantity price
+    const frEffectiveTotal = isFrenchVersion 
+      ? (isUsingCustomQtyFr ? frCustomTotal : selectedQtyOptionFr.price)
+      : 0
 
-    const qty = overrideQty ?? (usePackages ? selectedQtyOption.qty : quantity)
+    const qty = overrideQty ?? (
+      isUsingCustomQtyFr 
+        ? customQuantityFr 
+        : usePackages 
+          ? selectedQtyOption.qty 
+          : quantity
+    )
     const unitPrice = overridePrice ?? (
       isFrenchVersion
-        ? frEffectiveTotal / selectedQtyOptionFr.qty
+        ? (isUsingCustomQtyFr ? FR_PRICE_PER_PANEL : frEffectiveTotal / selectedQtyOptionFr.qty)
         : usePackages
           ? selectedQtyOption.price / selectedQtyOption.qty
           : (product.salePrice || product.price)
@@ -158,12 +173,12 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       const orderData = {
         productId: product.id,
         name: product.name,
-        price: frEffectiveTotal / selectedQtyOptionFr.qty,
+        price: isUsingCustomQtyFr ? FR_PRICE_PER_PANEL : frEffectiveTotal / selectedQtyOptionFr.qty,
         totalPrice: frEffectiveTotal,
-        quantity: selectedQtyOptionFr.qty,
+        quantity: isUsingCustomQtyFr ? customQuantityFr : selectedQtyOptionFr.qty,
         image: product.images?.[0] || product.image || "",
         currency: "EUR",
-        ledFree: selectedQtyOptionFr.ledFree,  // true when 12-panel pack selected
+        ledFree: isUsingCustomQtyFr ? false : selectedQtyOptionFr.ledFree,  // true when 12-panel pack selected
       }
       try {
         sessionStorage.setItem("checkout_order_fr", JSON.stringify(orderData))
@@ -174,10 +189,10 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       // FR: if callback provided, do silent add + scroll instead of redirect
       if (onAddedToCart) {
         onAddedToCart({
-          qty: selectedQtyOptionFr.qty,
-          price: frEffectiveTotal / selectedQtyOptionFr.qty,
+          qty: isUsingCustomQtyFr ? customQuantityFr! : selectedQtyOptionFr.qty,
+          price: isUsingCustomQtyFr ? FR_PRICE_PER_PANEL : frEffectiveTotal / selectedQtyOptionFr.qty,
           totalPrice: frEffectiveTotal,
-          ledFree: selectedQtyOptionFr.ledFree,
+          ledFree: isUsingCustomQtyFr ? false : selectedQtyOptionFr.ledFree,
         })
         return // Don't redirect — let parent handle scroll to Order Summary
       }
@@ -208,23 +223,105 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   // French version: upsell quantity selector + orange CTA button
   if (isFrenchVersion) {
     const selectedFr = selectedQtyOptionFr
+    const isUsingCustomQty = customQuantityFr !== null
+    const customTotal = isUsingCustomQty ? customQuantityFr * FR_PRICE_PER_PANEL : 0
+    
     return (
       <div className="flex flex-col gap-3 w-full">
-        {/* Quantity upsell cards */}
-        <div className="space-y-2">
-          {frQuantities.map((option) => {
-            const isSelected = selectedFr.qty === option.qty
-            return (
-              <button
-                key={option.qty}
-                type="button"
-                onClick={() => setSelectedQtyOptionFr(option)}
-                className={`w-full rounded-lg border-2 px-4 py-3 transition-all text-left ${
-                  isSelected
-                    ? "border-[#FF6B00] bg-orange-50"
-                    : "border-gray-200 bg-white hover:border-gray-300"
-                }`}
-              >
+        {/* Custom quantity selector */}
+        <div className="mb-2">
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            Choisissez la quantité désirée ou profitez de nos paquets
+          </p>
+          <div 
+            className={`flex items-center justify-between rounded-lg border-2 px-4 py-3 transition-all ${
+              isUsingCustomQty
+                ? "border-[#FF6B00] bg-orange-50"
+                : "border-gray-200 bg-white"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-700">Quantité :</span>
+              <div className="flex items-center border border-gray-300 rounded-md">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newQty = Math.max(1, (customQuantityFr || 1) - 1)
+                    setCustomQuantityFr(newQty)
+                  }}
+                  className="flex h-8 w-8 items-center justify-center transition-colors hover:bg-gray-100 rounded-l-md"
+                  aria-label="Diminuer la quantité"
+                >
+                  <Minus className="h-3 w-3" />
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  value={customQuantityFr || 1}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10)
+                    if (!isNaN(val) && val >= 1) {
+                      setCustomQuantityFr(val)
+                    }
+                  }}
+                  onFocus={() => {
+                    if (customQuantityFr === null) setCustomQuantityFr(1)
+                  }}
+                  className="w-12 text-center text-sm font-medium border-x border-gray-300 h-8 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomQuantityFr((customQuantityFr || 1) + 1)
+                  }}
+                  className="flex h-8 w-8 items-center justify-center transition-colors hover:bg-gray-100 rounded-r-md"
+                  aria-label="Augmenter la quantité"
+                >
+                  <Plus className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+            {isUsingCustomQty && (
+              <div className="flex flex-col items-end">
+                <span className="text-sm font-bold text-gray-900">
+                  €{customTotal.toFixed(2).replace(".", ",")}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {FR_PRICE_PER_PANEL.toFixed(2).replace(".", ",")} EUR / panneau
+                </span>
+              </div>
+            )}
+          </div>
+          {isUsingCustomQty && (
+            <button
+              type="button"
+              onClick={() => setCustomQuantityFr(null)}
+              className="text-xs text-[#FF6B00] hover:underline mt-1"
+            >
+              Voir les paquets avec réductions
+            </button>
+          )}
+        </div>
+
+        {/* Package upsell cards - hidden when using custom quantity */}
+        {!isUsingCustomQty && (
+          <div className="space-y-2">
+            {frQuantities.map((option) => {
+              const isSelected = selectedFr.qty === option.qty
+              return (
+                <button
+                  key={option.qty}
+                  type="button"
+                  onClick={() => {
+                    setSelectedQtyOptionFr(option)
+                    setCustomQuantityFr(null)
+                  }}
+                  className={`w-full rounded-lg border-2 px-4 py-3 transition-all text-left ${
+                    isSelected
+                      ? "border-[#FF6B00] bg-orange-50"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
                 {/* Top row: label + badge + price */}
                 <div className="flex items-center justify-between gap-3 mb-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -257,12 +354,13 @@ export function AddToCartButton({ product, variant = "default", className, isFre
                   {option.freeShipping && <span className="text-green-700 font-medium">Livraison gratuite</span>}
                 </div>
               </button>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
 
-        {/* LED kit nudge — shown only when pack of 12 is NOT selected */}
-        {!selectedFr.ledFree && (
+        {/* LED kit nudge — shown only when pack of 12 is NOT selected and not using custom qty */}
+        {!isUsingCustomQty && !selectedFr.ledFree && (
           <div className="flex items-start gap-2 rounded-lg border border-dashed border-amber-400 bg-amber-50 px-3 py-2.5 text-xs text-gray-700">
             <span className="text-base leading-none flex-shrink-0">💡</span>
             <span>
@@ -280,8 +378,8 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           </div>
         )}
 
-        {/* LED kit banner — shown only when pack of 12 is selected */}
-        {selectedFr.ledFree && (
+        {/* LED kit banner — shown only when pack of 12 is selected and not using custom qty */}
+        {!isUsingCustomQty && selectedFr.ledFree && (
           <div className="rounded-lg bg-emerald-800 text-white px-4 py-3 text-xs leading-relaxed">
             <p className="font-bold text-emerald-200 text-[10px] uppercase tracking-wider mb-1">Inclus gratuitement</p>
             <p className="font-semibold text-sm mb-0.5">
@@ -310,12 +408,18 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Transformer mes {selectedFr.coverage} {selectedFr.price.toFixed(0)} EUR
+          {isUsingCustomQty 
+            ? `Ajouter ${customQuantityFr} panneau${customQuantityFr > 1 ? 'x' : ''} — ${customTotal.toFixed(0)} EUR`
+            : `Transformer mes ${selectedFr.coverage} ${selectedFr.price.toFixed(0)} EUR`
+          }
         </button>
 
         {/* Price per panel anchor */}
         <p className="text-center text-xs text-gray-600">
-          soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Économisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs pièce unique
+          {isUsingCustomQty 
+            ? `${FR_PRICE_PER_PANEL.toFixed(2).replace(".", ",")} EUR / panneau`
+            : `soit ${(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Économisez ${Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs pièce unique`
+          }
         </p>
 
         {/* Trust signals row */}
