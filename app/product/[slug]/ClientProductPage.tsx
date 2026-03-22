@@ -119,20 +119,13 @@ export default function ClientProductPage({
   // FR Order Summary state — shows after "Commander Maintenant" is clicked
   const [frOrderData, setFrOrderData] = useState<{ qty: number; price: number; totalPrice: number; ledFree: boolean } | null>(null)
 
-  // FR: callback when item is added to cart — show toast + scroll to Acoustic Line Section
+  // FR: callback when item is added to cart — show toast only (no scroll)
   const handleFrAddedToCart = (orderData: { qty: number; price: number; totalPrice: number; ledFree: boolean }) => {
     setFrOrderData(orderData)
     toast({
       title: "Produit ajouté !",
-      description: "Finalisez votre commande ci-dessous",
+      description: `${orderData.qty} panneau${orderData.qty > 1 ? 'x' : ''} ajouté${orderData.qty > 1 ? 's' : ''} au panier`,
     })
-    // Scroll to Acoustic Line Section after a small delay
-    setTimeout(() => {
-      const acousticSection = document.getElementById("acoustic-line-section")
-      if (acousticSection) {
-        acousticSection.scrollIntoView({ behavior: "smooth", block: "start" })
-      }
-    }, 100)
   }
   
   // Sticky CTA: show when main CTA button scrolls out of view (for FR or EN Flexible Acoustic)
