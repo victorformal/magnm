@@ -192,7 +192,7 @@ export default function CheckoutFrPage() {
                 >
                   Kit Ruban LED Encastré
                 </a>
-                <p className="text-xs text-emerald-700 mt-0.5">Bonus Pack Pro — inclus gratuitement</p>
+                <p className="text-xs text-emerald-700 mt-0.5">Bonus Pack Pro, inclus gratuitement</p>
               </div>
               <p className="text-sm font-semibold flex-shrink-0 text-emerald-700 line-through opacity-60">€49,00</p>
             </div>
@@ -230,7 +230,7 @@ export default function CheckoutFrPage() {
             </div>
             <div className="flex items-start gap-2">
               <Star className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
-              <span className="text-xs text-muted-foreground">4.8/5 — 2 847 avis clients</span>
+              <span className="text-xs text-muted-foreground">4.8/5, 2 847 avis clients</span>
             </div>
           </div>
         </div>
