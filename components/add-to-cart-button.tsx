@@ -73,10 +73,12 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
     const usePackages = isFrenchVersion || isEnglishFlexibleAcoustic
 
-    // FR: always use the discounted pack price (€179/€229/€279/€329)
-    const frEffectiveTotal = isFrenchVersion ? selectedQtyOptionFr.price : 0
+    // FR: use override price if provided (custom qty), otherwise use pack price
+    const frEffectiveTotal = isFrenchVersion 
+      ? (overridePrice ?? selectedQtyOptionFr.price) 
+      : 0
 
-    const qty = overrideQty ?? (usePackages ? selectedQtyOption.qty : quantity)
+    const qty = overrideQty ?? (usePackages ? (isFrenchVersion ? selectedQtyOptionFr.qty : selectedQtyOption.qty) : quantity)
     const unitPrice = overridePrice ?? (
       isFrenchVersion
         ? frEffectiveTotal / selectedQtyOptionFr.qty
@@ -149,8 +151,9 @@ export function AddToCartButton({ product, variant = "default", className, isFre
     }).catch(console.error)
 
     // For FR/EN upsell, add the selected qty as a single cart entry with adjusted price
+    const frUnitPrice = isFrenchVersion ? frEffectiveTotal / qty : 0
     const productToAdd = usePackages
-      ? { ...product, price: isFrenchVersion ? frEffectiveTotal / selectedQtyOptionFr.qty : selectedQtyOption.price / selectedQtyOption.qty }
+      ? { ...product, price: isFrenchVersion ? frUnitPrice : selectedQtyOption.price / selectedQtyOption.qty }
       : product
     addItem(productToAdd, qty)
 
