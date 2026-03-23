@@ -133,7 +133,7 @@ export default function SuccesFrClient({ sessionId }: { sessionId: string | null
 
         {/* Post-purchase upsell */}
         <div className="rounded-xl bg-white border border-[#FF6B00]/30 shadow-sm p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#FF6B00] mb-1">Offre exclusive — clients qui ont acheté</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#FF6B00] mb-1">Offre exclusive, clients qui ont acheté</p>
           <h2 className="text-base font-bold text-foreground mb-3">
             Complétez votre installation avec le Kit LED
           </h2>

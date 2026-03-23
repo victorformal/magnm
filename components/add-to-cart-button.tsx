@@ -396,7 +396,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
               OFFERT !
             </p>
             <p className="text-emerald-100 opacity-90">
-              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; — 2 de chaque), driver LED premium, variateur tactile 10–100%, lumière blanche chaude 3000K. Valeur : €49,00.
+              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34;, 2 de chaque), driver LED premium, variateur tactile 10-100%, lumière blanche chaude 3000K. Valeur : €49,00.
             </p>
           </div>
         )}
