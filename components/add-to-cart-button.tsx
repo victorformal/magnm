@@ -24,8 +24,6 @@ interface AddToCartButtonProps {
 // FR upsell quantity options — base price €14,90/panneau
 // original = qty × 14.90 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 2,  price: 24.90,  original: 29.80,  label: "2 Panneaux",  badge: null,               savings: "€4,90",   freeShipping: false, ledFree: false, coverage: "~6 m²",  ideal: "Coin TV ou colonne" },
-  { qty: 6,  price: 69.00,  original: 89.40,  label: "6 Panneaux",  badge: "Meilleure Valeur", savings: "€20,40",  freeShipping: true,  ledFree: false, coverage: "~18 m²", ideal: "Mur entier standard" },
   { qty: 8,  price: 89.00,  original: 119.20, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€30,20",  freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
   { qty: 10, price: 109.00, original: 149.00, label: "10 Panneaux", badge: null,               savings: "€40,00",  freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
   { qty: 12, price: 249.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€169,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
@@ -43,8 +41,11 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   const { addItem, items } = useCart()
   const router = useRouter()
 
-  // FR: default to 6 panels option (index 1)
-  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[1])
+  // FR: default to 8 panels option (index 0)
+  const [selectedQtyOptionFr, setSelectedQtyOptionFr] = useState(frQuantities[0])
+  // FR: custom quantity selector
+  const [customQuantityFr, setCustomQuantityFr] = useState(5)
+  const [useFrCustomQty, setUseFrCustomQty] = useState(false)
   // EN Flexible Acoustic: default to 4 panels option (index 2)
   const [selectedQtyOptionEn, setSelectedQtyOptionEn] = useState(enQuantities[2])
   // Non-FR/EN flexible: simple quantity
@@ -72,10 +73,12 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
     const usePackages = isFrenchVersion || isEnglishFlexibleAcoustic
 
-    // FR: always use the discounted pack price (€179/€229/€279/€329)
-    const frEffectiveTotal = isFrenchVersion ? selectedQtyOptionFr.price : 0
+    // FR: use override price if provided (custom qty), otherwise use pack price
+    const frEffectiveTotal = isFrenchVersion 
+      ? (overridePrice ?? selectedQtyOptionFr.price) 
+      : 0
 
-    const qty = overrideQty ?? (usePackages ? selectedQtyOption.qty : quantity)
+    const qty = overrideQty ?? (usePackages ? (isFrenchVersion ? selectedQtyOptionFr.qty : selectedQtyOption.qty) : quantity)
     const unitPrice = overridePrice ?? (
       isFrenchVersion
         ? frEffectiveTotal / selectedQtyOptionFr.qty
@@ -148,22 +151,28 @@ export function AddToCartButton({ product, variant = "default", className, isFre
     }).catch(console.error)
 
     // For FR/EN upsell, add the selected qty as a single cart entry with adjusted price
+    const frUnitPrice = isFrenchVersion ? frEffectiveTotal / qty : 0
     const productToAdd = usePackages
-      ? { ...product, price: isFrenchVersion ? frEffectiveTotal / selectedQtyOptionFr.qty : selectedQtyOption.price / selectedQtyOption.qty }
+      ? { ...product, price: isFrenchVersion ? frUnitPrice : selectedQtyOption.price / selectedQtyOption.qty }
       : product
     addItem(productToAdd, qty)
 
     // FR: persist order in sessionStorage so /checkout-fr always has data
     if (isFrenchVersion) {
+      const finalQty = overrideQty ?? selectedQtyOptionFr.qty
+      const finalTotalPrice = overridePrice ?? frEffectiveTotal
+      const finalUnitPrice = finalTotalPrice / finalQty
+      const finalLedFree = overrideQty ? false : selectedQtyOptionFr.ledFree
+      
       const orderData = {
         productId: product.id,
         name: product.name,
-        price: frEffectiveTotal / selectedQtyOptionFr.qty,
-        totalPrice: frEffectiveTotal,
-        quantity: selectedQtyOptionFr.qty,
+        price: finalUnitPrice,
+        totalPrice: finalTotalPrice,
+        quantity: finalQty,
         image: product.images?.[0] || product.image || "",
         currency: "EUR",
-        ledFree: selectedQtyOptionFr.ledFree,  // true when 12-panel pack selected
+        ledFree: finalLedFree,
       }
       try {
         sessionStorage.setItem("checkout_order_fr", JSON.stringify(orderData))
@@ -174,10 +183,10 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       // FR: if callback provided, do silent add + scroll instead of redirect
       if (onAddedToCart) {
         onAddedToCart({
-          qty: selectedQtyOptionFr.qty,
-          price: frEffectiveTotal / selectedQtyOptionFr.qty,
-          totalPrice: frEffectiveTotal,
-          ledFree: selectedQtyOptionFr.ledFree,
+          qty: finalQty,
+          price: finalUnitPrice,
+          totalPrice: finalTotalPrice,
+          ledFree: finalLedFree,
         })
         return // Don't redirect — let parent handle scroll to Order Summary
       }
@@ -208,17 +217,90 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   // French version: upsell quantity selector + orange CTA button
   if (isFrenchVersion) {
     const selectedFr = selectedQtyOptionFr
+    const UNIT_PRICE_FR = 14.90
+    const customTotalFr = customQuantityFr * UNIT_PRICE_FR
+
+    const handleCustomAdd = () => {
+      handleBuyNow(customQuantityFr, customTotalFr)
+    }
+
+    const handlePackageSelect = (option: typeof frQuantities[0]) => {
+      setUseFrCustomQty(false)
+      setSelectedQtyOptionFr(option)
+    }
+
     return (
       <div className="flex flex-col gap-3 w-full">
-        {/* Quantity upsell cards */}
+        {/* Header message */}
+        <p className="text-sm text-gray-700 text-center font-medium">
+          Choisissez la quantité désirée ou profitez de nos paquets
+        </p>
+
+        {/* Custom quantity selector */}
+        <div 
+          className={`rounded-lg border-2 px-4 py-3 transition-all ${
+            useFrCustomQty 
+              ? "border-[#FF6B00] bg-orange-50" 
+              : "border-gray-200 bg-white"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-700">Quantité :</span>
+              <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUseFrCustomQty(true)
+                    setCustomQuantityFr((q) => Math.max(1, q - 1))
+                  }}
+                  className="flex h-9 w-10 items-center justify-center transition-colors hover:bg-gray-100"
+                  aria-label="Diminuer la quantité"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span className="w-12 text-center text-base font-semibold text-gray-900">{customQuantityFr}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUseFrCustomQty(true)
+                    setCustomQuantityFr((q) => q + 1)
+                  }}
+                  className="flex h-9 w-10 items-center justify-center transition-colors hover:bg-gray-100"
+                  aria-label="Augmenter la quantité"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-sm font-bold text-[#FF6B00]">€{customTotalFr.toFixed(2).replace(".", ",")}</span>
+              <span className="text-[10px] text-gray-500">{UNIT_PRICE_FR.toFixed(2).replace(".", ",")} EUR / panneau</span>
+            </div>
+          </div>
+          {useFrCustomQty && (
+            <button
+              type="button"
+              disabled={!product.inStock}
+              onClick={handleCustomAdd}
+              data-add-to-cart="true"
+              className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-3 px-6 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ShoppingCart className="h-5 w-5 flex-shrink-0" />
+              Ajouter {customQuantityFr} panneaux {customTotalFr.toFixed(0)} EUR
+            </button>
+          )}
+        </div>
+
+        {/* Package upsell cards */}
         <div className="space-y-2">
           {frQuantities.map((option) => {
-            const isSelected = selectedFr.qty === option.qty
+            const isSelected = !useFrCustomQty && selectedFr.qty === option.qty
             return (
               <button
                 key={option.qty}
                 type="button"
-                onClick={() => setSelectedQtyOptionFr(option)}
+                onClick={() => handlePackageSelect(option)}
                 className={`w-full rounded-lg border-2 px-4 py-3 transition-all text-left ${
                   isSelected
                     ? "border-[#FF6B00] bg-orange-50"
@@ -296,27 +378,31 @@ export function AddToCartButton({ product, variant = "default", className, isFre
               OFFERT !
             </p>
             <p className="text-emerald-100 opacity-90">
-              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; — 2 de chaque), driver LED premium, variateur tactile 10–100%, lumière blanche chaude 3000K. Valeur : €49,00.
+              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; / 2 de chaque), driver LED premium, variateur tactile 10 à 100%, lumière blanche chaude 3000K. Valeur : €49,00.
             </p>
           </div>
         )}
 
-        {/* Orange CTA button with dynamic copy */}
-        <button
-          type="button"
-          disabled={!product.inStock}
-          onClick={() => handleBuyNow()}
-          data-add-to-cart="true"
-          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Transformer mes {selectedFr.coverage} {selectedFr.price.toFixed(0)} EUR
-        </button>
+        {/* Orange CTA button with dynamic copy - only show when package is selected */}
+        {!useFrCustomQty && (
+          <button
+            type="button"
+            disabled={!product.inStock}
+            onClick={() => handleBuyNow()}
+            data-add-to-cart="true"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ShoppingCart className="h-5 w-5 flex-shrink-0" />
+            Ajouter {selectedFr.qty} panneaux {selectedFr.price.toFixed(0)} EUR
+          </button>
+        )}
 
         {/* Price per panel anchor */}
-        <p className="text-center text-xs text-gray-600">
-          soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Économisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs pièce unique
-        </p>
+        {!useFrCustomQty && (
+          <p className="text-center text-xs text-gray-600">
+            soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Économisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs pièce unique
+          </p>
+        )}
 
         {/* Trust signals row */}
         <div className="flex items-center justify-center gap-4 flex-wrap text-[11px] text-gray-500">

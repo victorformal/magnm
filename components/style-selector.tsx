@@ -22,7 +22,7 @@ export function StyleSelector({ styles, onStyleChange }: StyleSelectorProps) {
     <div className="mt-6">
       <div className="flex items-center gap-2">
         <h3 className="text-sm font-semibold uppercase tracking-wider">Style</h3>
-        <span className="text-sm text-muted-foreground">— {selectedStyle.name}</span>
+        <span className="text-sm text-muted-foreground">: {selectedStyle.name}</span>
       </div>
       <div className="mt-3 flex gap-3">
         {styles.map((style) => (
