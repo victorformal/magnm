@@ -21,12 +21,12 @@ interface AddToCartButtonProps {
   onAddedToCart?: (orderData: { qty: number; price: number; totalPrice: number; ledFree: boolean }) => void
 }
 
-// FR upsell quantity options — base price €14,90/panneau
-// original = qty × 14.90 | pack price = discounted total | savings = original - pack
+// FR upsell quantity options — base price €14,50/panneau
+// original = qty × 14.50 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 8,  price: 89.00,  original: 119.20, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€30,20",  freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
-  { qty: 10, price: 109.00, original: 149.00, label: "10 Panneaux", badge: null,               savings: "€40,00",  freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
-  { qty: 12, price: 249.00, original: 418.80, label: "12 Panneaux", badge: "Pack Pro",         savings: "€169,80", freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
+  { qty: 8,  price: 89.00,  original: 116.00, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€27,00",  freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
+  { qty: 10, price: 109.00, original: 145.00, label: "10 Panneaux", badge: null,               savings: "€36,00",  freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
+  { qty: 12, price: 249.00, original: 174.00, label: "12 Panneaux", badge: "Pack Pro",         savings: "€75,00",  freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
 ]
 
 // EN upsell quantity options for Flexible Acoustic Panel
@@ -217,7 +217,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   // French version: upsell quantity selector + orange CTA button
   if (isFrenchVersion) {
     const selectedFr = selectedQtyOptionFr
-    const UNIT_PRICE_FR = 14.90
+    const UNIT_PRICE_FR = 14.50
     const customTotalFr = customQuantityFr * UNIT_PRICE_FR
 
     const handleCustomAdd = () => {

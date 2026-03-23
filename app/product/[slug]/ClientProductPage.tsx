@@ -124,15 +124,8 @@ export default function ClientProductPage({
     setFrOrderData(orderData)
     toast({
       title: "Produit ajouté !",
-      description: "Finalisez votre commande ci-dessous",
+      description: `${data.qty} panneau(x) ajouté(s) au panier`,
     })
-    // Scroll to Acoustic Line Section after a small delay
-    setTimeout(() => {
-      const acousticSection = document.getElementById("acoustic-line-section")
-      if (acousticSection) {
-        acousticSection.scrollIntoView({ behavior: "smooth", block: "start" })
-      }
-    }, 100)
   }
   
   // Sticky CTA: show when main CTA button scrolls out of view (for FR or EN Flexible Acoustic)
