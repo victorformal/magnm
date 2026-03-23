@@ -223,7 +223,7 @@ export default function ClientProductPage({
             {/* FR: Benefit subheadline */}
             {isFrenchVersion && isFlexibleAcousticPanel && (
               <p className="text-sm sm:text-base text-muted-foreground mt-2 leading-relaxed">
-                Le seul panneau qui epouse vos courbes — sans outil, sans artisan, en 30 minutes
+                Le seul panneau qui épouse vos courbes, sans outil, sans artisan, en 30 minutes
               </p>
             )}
 
@@ -304,8 +304,8 @@ export default function ClientProductPage({
                 <div className="bg-secondary/50 border border-border/50 rounded-lg p-4">
                   <p className="text-lg sm:text-xl font-serif font-medium text-foreground leading-snug text-center">
                     {isFrenchVersion 
-                      ? "Transformez Votre Mur en Minutes — Sans Outils, Sans Salissure" 
-                      : "Transform Your Wall in Minutes — No Tools, No Mess"}
+                      ? "Transformez Votre Mur en Minutes, Sans Outils, Sans Salissure" 
+                      : "Transform Your Wall in Minutes, No Tools, No Mess"}
                   </p>
                   <div className="flex justify-center gap-3 mt-3 flex-wrap">
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-accent">
@@ -349,35 +349,35 @@ export default function ClientProductPage({
 
                 <p className="leading-relaxed text-muted-foreground text-sm sm:text-base">
                   {isFrenchVersion 
-                    ? "Le panneau acoustique flexible qui sublime votre espace, reduit l'echo et offre un look architectural moderne — sans renovation."
-                    : "The flexible acoustic panel that upgrades your space, reduces echo and delivers a modern architectural look — without renovation."}
+                    ? "Le panneau acoustique flexible qui sublime votre espace, réduit l'écho et offre un look architectural moderne, sans rénovation."
+                    : "The flexible acoustic panel that upgrades your space, reduces echo and delivers a modern architectural look, without renovation."}
                 </p>
                 
                 <ul className="space-y-2.5 pt-2">
                   <li className="flex items-start gap-2.5 text-sm text-foreground">
                     <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>{isFrenchVersion ? "Flexible" : "Flexible"}</strong> — {isFrenchVersion ? "Se plie aux courbes et piliers" : "Bends to curves and pillars"}</span>
+                    <span><strong>{isFrenchVersion ? "Flexible" : "Flexible"}</strong> : {isFrenchVersion ? "Se plie aux courbes et piliers" : "Bends to curves and pillars"}</span>
                   </li>
                   <li className="flex items-start gap-2.5 text-sm text-foreground">
                     <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>{isFrenchVersion ? "Installation facile" : "Easy Install"}</strong> — {isFrenchVersion ? "Auto-adhesif, sans outils" : "Peel & stick, no tools needed"}</span>
+                    <span><strong>{isFrenchVersion ? "Installation facile" : "Easy Install"}</strong> : {isFrenchVersion ? "Auto-adhésif, sans outils" : "Peel & stick, no tools needed"}</span>
                   </li>
                   <li className="flex items-start gap-2.5 text-sm text-foreground">
                     <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>{isFrenchVersion ? "Sans salissure" : "No Mess"}</strong> — {isFrenchVersion ? "Pas de peinture, pas de poussiere" : "No paint, no dust, no hassle"}</span>
+                    <span><strong>{isFrenchVersion ? "Sans salissure" : "No Mess"}</strong> : {isFrenchVersion ? "Pas de peinture, pas de poussière" : "No paint, no dust, no hassle"}</span>
                   </li>
                   <li className="flex items-start gap-2.5 text-sm text-foreground">
                     <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>{isFrenchVersion ? "Acoustique" : "Acoustic"}</strong> — {isFrenchVersion ? "Reduit l'echo et ameliore le confort sonore" : "Reduces echo and improves sound comfort"}</span>
+                    <span><strong>{isFrenchVersion ? "Acoustique" : "Acoustic"}</strong> : {isFrenchVersion ? "Réduit l'écho et améliore le confort sonore" : "Reduces echo and improves sound comfort"}</span>
                   </li>
                   <li className="flex items-start gap-2.5 text-sm text-foreground">
                     <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>{isFrenchVersion ? "Look Premium" : "Premium Look"}</strong> — {isFrenchVersion ? "Esthetique bois haut de gamme" : "High-end wood aesthetic"}</span>
+                    <span><strong>{isFrenchVersion ? "Look Premium" : "Premium Look"}</strong> : {isFrenchVersion ? "Esthétique bois haut de gamme" : "High-end wood aesthetic"}</span>
                   </li>
                 </ul>
                 <div className="pt-2 space-y-1.5 text-sm text-muted-foreground">
                   <p>
-                    <span className="font-medium text-foreground">{isFrenchVersion ? "Taille:" : "Size:"}</span> 270 × 110 cm — {isFrenchVersion ? "couvre jusqu'a 3m²" : "covers up to 3m²"}
+                    <span className="font-medium text-foreground">{isFrenchVersion ? "Taille:" : "Size:"}</span> 270 × 110 cm, {isFrenchVersion ? "couvre jusqu'à 3m²" : "covers up to 3m²"}
                   </p>
                   <p className="text-xs italic">
                     {isFrenchVersion ? "Parfait pour les murs TV, les murs de caracteristique et les zones d'accent." : "Ideal for TV walls, feature walls and accent areas."}
@@ -663,7 +663,7 @@ export default function ClientProductPage({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm text-emerald-800">Kit Ruban LED Encastré</p>
-                  <p className="text-xs text-emerald-700">Bonus Pack Pro — OFFERT</p>
+                  <p className="text-xs text-emerald-700">Bonus Pack Pro OFFERT</p>
                 </div>
                 <p className="text-sm font-semibold text-emerald-700 line-through opacity-60">€49,00</p>
               </div>
@@ -773,7 +773,7 @@ export default function ClientProductPage({
             <ShoppingCart className="h-5 w-5 flex-shrink-0" />
             {isFrenchVersion 
               ? (frOrderData ? "Finaliser Ma Commande" : "Commander Maintenant") 
-              : "Order Now — £60.00"}
+              : "Order Now £60.00"}
           </button>
           <p className="text-center text-[10px] text-muted-foreground mt-1.5">
             {isFrenchVersion ? "Paiement 100% Sécurisé • Livraison 5-8 jours" : "100% Secure Payment • Delivery 5-8 days"}

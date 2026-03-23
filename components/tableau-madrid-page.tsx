@@ -204,12 +204,12 @@ export function TableauMadridPage({ product }: Props) {
           {showSizeGuide && (
             <div className="mb-3 p-3 bg-muted rounded-lg text-xs text-muted-foreground">
               <p className="font-semibold mb-1">Guide des tailles :</p>
-              <p>21x30 cm — Format A4, idéal pour petits espaces</p>
-              <p>30x40 cm — Format A3, populaire pour bureaux</p>
-              <p>40x60 cm — Grand format, impact visuel fort</p>
-              <p>50x70 cm — Bestseller, parfait pour salon</p>
-              <p>70x100 cm — Très grand, statement wall</p>
-              <p>100x150 cm — Format XXL, impact maximal</p>
+              <p>21x30 cm : Format A4, idéal pour petits espaces</p>
+              <p>30x40 cm : Format A3, populaire pour bureaux</p>
+              <p>40x60 cm : Grand format, impact visuel fort</p>
+              <p>50x70 cm : Bestseller, parfait pour salon</p>
+              <p>70x100 cm : Très grand, statement wall</p>
+              <p>100x150 cm : Format XXL, impact maximal</p>
             </div>
           )}
           <div className="flex flex-wrap gap-2">

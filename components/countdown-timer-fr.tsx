@@ -45,7 +45,7 @@ export function CountdownTimerFr() {
       aria-live="polite"
       aria-label="Temps restant pour l'offre"
     >
-      <span style={{ color: "#92400E" }}>Offre expire dans :</span>
+      <span style={{ color: "#92400E" }}>Offre expire dans</span>
       <strong
         className="font-bold tabular-nums"
         style={{ color: "#DC2626", fontSize: "1.15rem", letterSpacing: "0.03em" }}
