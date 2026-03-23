@@ -155,7 +155,7 @@ export default function ClientProductPage({
   }
 
   return (
-    <div className="py-8 lg:py-12 overflow-x-hidden max-w-full w-full box-border relative">
+    <div className={`py-8 lg:py-12 overflow-x-hidden max-w-full w-full box-border relative ${isFrenchVersion && isFlexibleAcousticPanel ? "pb-24" : ""}`}>
       <ViewContentTracker product={product} />
 
       {/* Exit intent popup — FR only */}
