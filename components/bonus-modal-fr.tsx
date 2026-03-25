@@ -149,6 +149,12 @@ export function BonusModalFr({ isOpen, onClose, onAcceptBonus, onDeclineBonus }:
                   AXB8930M9
                 </span>
               </div>
+              {/* Installation code warning */}
+              <div className="mt-3 pt-3 border-t border-green-200">
+                <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2.5 leading-relaxed">
+                  <strong>Attention :</strong> Passez le code d&apos;installation à la livraison si vous désirez que notre équipe fasse l&apos;installation des panneaux. L&apos;installation n&apos;est valide qu&apos;avec le code, notez-le !
+                </p>
+              </div>
             </div>
           )}
 
