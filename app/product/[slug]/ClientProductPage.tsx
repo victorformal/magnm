@@ -33,6 +33,7 @@ import { StockUrgencyBarFr } from "@/components/stock-urgency-bar-fr"
 import { SocialProofInlineFr } from "@/components/social-proof-inline-fr"
 import { RatingBreakdownFr } from "@/components/rating-breakdown-fr"
 import { SalesNotificationToast } from "@/components/sales-notification-toast"
+import { BonusModalFr } from "@/components/bonus-modal-fr"
 
 interface ClientProductPageProps {
   product: any
@@ -119,6 +120,9 @@ export default function ClientProductPage({
 
   // FR Order Summary state — shows after "Commander Maintenant" is clicked
   const [frOrderData, setFrOrderData] = useState<{ qty: number; price: number; totalPrice: number; ledFree: boolean } | null>(null)
+  
+  // FR: Bonus modal state
+  const [showBonusModal, setShowBonusModal] = useState(false)
 
   // FR: callback when item is added to cart — show toast + scroll to Acoustic Line Section
   const handleFrAddedToCart = (orderData: { qty: number; price: number; totalPrice: number; ledFree: boolean }) => {
@@ -153,6 +157,29 @@ export default function ClientProductPage({
         quantity: 1,
       })
     })
+  }
+
+  // FR: Handle "Finaliser Ma Commande" button click - show bonus modal
+  const handleFinalizeOrder = () => {
+    setShowBonusModal(true)
+  }
+
+  const handleAcceptBonus = () => {
+    sessionStorage.setItem("checkout_bonus_fr", JSON.stringify({
+      bonusPanels: 5,
+      cleanerIncluded: true,
+      technicianIncluded: true,
+      installationCode: "AXB8930M9",
+      bonusValue: 127.00
+    }))
+    setShowBonusModal(false)
+    router.push("/checkout-fr")
+  }
+
+  const handleDeclineBonus = () => {
+    sessionStorage.removeItem("checkout_bonus_fr")
+    setShowBonusModal(false)
+    router.push("/checkout-fr")
   }
 
   return (
@@ -695,7 +722,7 @@ export default function ClientProductPage({
             {/* CTA Button */}
             <button
               type="button"
-              onClick={() => router.push("/checkout-fr")}
+              onClick={handleFinalizeOrder}
               className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-lg py-4 px-8 transition-colors duration-200 shadow-lg"
             >
               <Shield className="h-5 w-5 flex-shrink-0" />
@@ -780,6 +807,16 @@ export default function ClientProductPage({
 
       {/* Sticky Cart Bar for Desktop - FR only */}
       {isFrenchVersion && isFlexibleAcousticPanel && <StickyCartBarFr />}
+
+      {/* Bonus Modal - FR only */}
+      {isFrenchVersion && (
+        <BonusModalFr
+          isOpen={showBonusModal}
+          onClose={() => setShowBonusModal(false)}
+          onAcceptBonus={handleAcceptBonus}
+          onDeclineBonus={handleDeclineBonus}
+        />
+      )}
     </div>
   )
 }

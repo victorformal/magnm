@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
 import { StripeCheckoutFr } from "@/components/stripe-checkout-fr"
-import { ArrowLeft, Lock, Package, RotateCcw, Star } from "lucide-react"
+import { ArrowLeft, Lock, Package, RotateCcw, Star, Gift, Check, Wrench } from "lucide-react"
 import { trackInitiateCheckout, generateEventId } from "@/lib/meta-pixel"
 import { getFbpFbc } from "@/lib/fbp-fbc"
 import { getStoredUTMs } from "@/lib/utm-client"
@@ -23,8 +23,18 @@ interface StoredOrder {
   ledFree?: boolean   // true when 12-panel pack (Kit LED included)
 }
 
+interface BonusData {
+  bonusPanels: number
+  cleanerIncluded: boolean
+  technicianIncluded: boolean
+  installationCode: string
+  bonusValue: number
+}
+
 const LED_KIT_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LED0101-NcQN4b3GARfX7EQhQSIcnMbQB9NsFa.jpg"
 const LED_KIT_PRODUCT_URL = "/product/recessed-led-strip-lighting-fr"
+const CLEANER_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/CLEAN04-jsHtrQ87vwg45Qyo5RrSkzrJbV2MXC.jpg"
+const PANEL_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/panneu01-COvuniuy0UAMH2wAwPKmS9Tlev4Qrt.avif"
 
 export default function CheckoutFrPage() {
   const router = useRouter()
@@ -33,9 +43,20 @@ export default function CheckoutFrPage() {
 
   // Source of truth: sessionStorage first, then cart context
   const [storedOrder, setStoredOrder] = useState<StoredOrder | null>(null)
+  const [bonusData, setBonusData] = useState<BonusData | null>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    // Check for bonus data
+    try {
+      const bonusRaw = sessionStorage.getItem("checkout_bonus_fr")
+      if (bonusRaw) {
+        setBonusData(JSON.parse(bonusRaw))
+      }
+    } catch (e) {
+      // ignore
+    }
+
     try {
       const raw = sessionStorage.getItem("checkout_order_fr")
       if (raw) {
@@ -198,6 +219,90 @@ export default function CheckoutFrPage() {
             </div>
           )}
 
+          {/* Bonus Items Section */}
+          {bonusData && (
+            <div className="mb-4 rounded-xl border-2 border-dashed border-amber-400 bg-amber-50 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Gift className="w-5 h-5 text-amber-600" />
+                <span className="text-sm font-semibold text-amber-800">Bonus Offerts</span>
+                <span className="ml-auto text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">GRATUIT</span>
+              </div>
+
+              {/* Bonus panels */}
+              <div className="flex items-center gap-3 mb-3 pb-3 border-b border-amber-200">
+                <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white flex-shrink-0 border border-amber-200">
+                  <Image
+                    src={PANEL_IMAGE}
+                    alt="Panneaux Bonus"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-amber-900">{bonusData.bonusPanels} Panneaux Acoustiques Bonus</p>
+                  <p className="text-xs text-amber-700">Offert avec votre commande</p>
+                </div>
+                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-green-500 flex-shrink-0">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+              </div>
+
+              {/* Cleaner */}
+              {bonusData.cleanerIncluded && (
+                <div className="flex items-center gap-3 mb-3 pb-3 border-b border-amber-200">
+                  <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white flex-shrink-0 border border-amber-200">
+                    <Image
+                      src={CLEANER_IMAGE}
+                      alt="Nettoyant Clean"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-amber-900">Nettoyant Clean</p>
+                    <p className="text-xs text-amber-700">Produit de nettoyage professionnel</p>
+                  </div>
+                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-green-500 flex-shrink-0">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+              )}
+
+              {/* Technician */}
+              {bonusData.technicianIncluded && (
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0 border border-amber-200">
+                    <Wrench className="w-6 h-6 text-amber-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-amber-900">Technicien pour l&apos;installation</p>
+                    <p className="text-xs text-amber-700">Service d&apos;installation inclus</p>
+                  </div>
+                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-green-500 flex-shrink-0">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+              )}
+
+              {/* Installation code */}
+              <div className="mt-3 pt-3 border-t border-amber-200 flex items-center justify-between">
+                <span className="text-xs text-amber-700">Code d&apos;installation</span>
+                <span className="text-sm font-bold text-amber-900 bg-white border border-amber-300 rounded px-3 py-1 tracking-wider">
+                  {bonusData.installationCode}
+                </span>
+              </div>
+
+              {/* Value note */}
+              <div className="mt-3 text-center">
+                <span className="text-xs text-amber-700">
+                  Valeur des cadeaux : <strong className="text-amber-900">€{bonusData.bonusValue.toFixed(2)}</strong>
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Totals */}
           <div className="border-t border-border pt-3 space-y-2">
             <div className="flex justify-between text-sm">
@@ -206,6 +311,12 @@ export default function CheckoutFrPage() {
                 {isFreeShipping ? "GRATUITE" : "€7,00"}
               </span>
             </div>
+            {bonusData && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Bonus offerts</span>
+                <span className="text-green-600 font-semibold">€0,00</span>
+              </div>
+            )}
             <div className="flex justify-between font-semibold">
               <span>Total</span>
               <span className="text-lg">€{totalEur.toFixed(2)}</span>
