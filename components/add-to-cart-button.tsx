@@ -24,8 +24,6 @@ interface AddToCartButtonProps {
 // FR upsell quantity options — base price €14,50/panneau
 // original = qty × 14.50 | pack price = discounted total | savings = original - pack
 const frQuantities = [
-  { qty: 8,  price: 89.00,  original: 116.00, label: "8 Panneaux",  badge: "Le Plus Populaire",savings: "€27,00",  freeShipping: true,  ledFree: false, coverage: "~24 m²", ideal: "Grand salon" },
-  { qty: 10, price: 109.00, original: 145.00, label: "10 Panneaux", badge: null,               savings: "€36,00",  freeShipping: true,  ledFree: false, coverage: "~30 m²", ideal: "Mur + accent" },
   { qty: 12, price: 249.00, original: 174.00, label: "12 Panneaux", badge: "Pack Pro",         savings: "€75,00",  freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
 ]
 
@@ -287,7 +285,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
               className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-3 px-6 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-              Ajouter {customQuantityFr} panneaux {customTotalFr.toFixed(0)} EUR
+              Ajouter {customQuantityFr} {customQuantityFr === 1 ? "panneau" : "panneaux"} - €{customTotalFr.toFixed(2).replace(".", ",")}
             </button>
           )}
         </div>
@@ -393,7 +391,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-            Ajouter {selectedFr.qty} panneaux {selectedFr.price.toFixed(0)} EUR
+            Ajouter {selectedFr.qty} panneaux - €{selectedFr.price.toFixed(2).replace(".", ",")}
           </button>
         )}
 
