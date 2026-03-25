@@ -10,6 +10,7 @@ import { trackAddToCart, generateEventId } from "@/lib/meta-pixel"
 import { trackAddToCart as trackTikTokAddToCart } from "@/lib/tiktok-events"
 import { getFbpFbc } from "@/lib/fbp-fbc"
 import { getStoredUTMs } from "@/lib/utm-client"
+import { BonusModalFr } from "@/components/bonus-modal-fr"
 
 interface AddToCartButtonProps {
   product: Product
@@ -44,6 +45,9 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   // FR: custom quantity selector
   const [customQuantityFr, setCustomQuantityFr] = useState(5)
   const [useFrCustomQty, setUseFrCustomQty] = useState(false)
+  // FR: Bonus modal state
+  const [showBonusModal, setShowBonusModal] = useState(false)
+  const [pendingOrderData, setPendingOrderData] = useState<{ qty: number; price: number; totalPrice: number; ledFree: boolean } | null>(null)
   // EN Flexible Acoustic: default to 4 panels option (index 2)
   const [selectedQtyOptionEn, setSelectedQtyOptionEn] = useState(enQuantities[2])
   // Non-FR/EN flexible: simple quantity
@@ -188,10 +192,20 @@ export function AddToCartButton({ product, variant = "default", className, isFre
         })
         return // Don't redirect — let parent handle scroll to Order Summary
       }
+
+      // FR: Show bonus modal instead of redirecting directly
+      setPendingOrderData({
+        qty: finalQty,
+        price: finalUnitPrice,
+        totalPrice: finalTotalPrice,
+        ledFree: finalLedFree,
+      })
+      setShowBonusModal(true)
+      return
     }
 
-    // Redirect to cart/checkout
-    router.push(isFrenchVersion ? "/checkout-fr" : "/cart")
+    // Redirect to cart/checkout (EN only)
+    router.push("/cart")
   }
 
   const displayPrice = product.salePrice || product.price
@@ -227,7 +241,34 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       setSelectedQtyOptionFr(option)
     }
 
+    const handleAcceptBonus = () => {
+      // Store bonus info in sessionStorage
+      sessionStorage.setItem("checkout_bonus_fr", JSON.stringify({
+        bonusPanels: 5,
+        cleanerIncluded: true,
+        technicianIncluded: true,
+        installationCode: "AXB8930M9",
+        bonusValue: 127.00
+      }))
+      setShowBonusModal(false)
+      router.push("/checkout-fr")
+    }
+
+    const handleDeclineBonus = () => {
+      // Clear any bonus info
+      sessionStorage.removeItem("checkout_bonus_fr")
+      setShowBonusModal(false)
+      router.push("/checkout-fr")
+    }
+
     return (
+      <>
+      <BonusModalFr
+        isOpen={showBonusModal}
+        onClose={() => setShowBonusModal(false)}
+        onAcceptBonus={handleAcceptBonus}
+        onDeclineBonus={handleDeclineBonus}
+      />
       <div className="flex flex-col gap-3 w-full">
         {/* Header message */}
         <p className="text-sm text-gray-700 text-center font-medium">
@@ -376,7 +417,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
               OFFERT !
             </p>
             <p className="text-emerald-100 opacity-90">
-              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; / 2 de chaque), driver LED premium, variateur tactile 10 à 100%, lumière blanche chaude 3000K. Valeur : €49,00.
+              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; / 2 de chaque), driver LED premium, variateur tactile 10 �� 100%, lumière blanche chaude 3000K. Valeur : €49,00.
             </p>
           </div>
         )}
@@ -410,6 +451,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           <span className="flex items-center gap-1">🛡 Garantie 5 ans</span>
         </div>
       </div>
+      </>
     )
   }
 
