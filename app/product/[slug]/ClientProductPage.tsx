@@ -32,6 +32,7 @@ import { FAQSectionFr } from "@/components/faq-section-fr"
 import { StockUrgencyBarFr } from "@/components/stock-urgency-bar-fr"
 import { SocialProofInlineFr } from "@/components/social-proof-inline-fr"
 import { RatingBreakdownFr } from "@/components/rating-breakdown-fr"
+import { SalesNotificationToast } from "@/components/sales-notification-toast"
 
 interface ClientProductPageProps {
   product: any
@@ -157,6 +158,9 @@ export default function ClientProductPage({
   return (
     <div className="py-8 lg:py-12 overflow-x-hidden max-w-full w-full box-border relative">
       <ViewContentTracker product={product} />
+
+      {/* Sales notification toast — FR only */}
+      {isFrenchVersion && <SalesNotificationToast />}
 
       {/* Exit intent popup — FR only */}
       {isFrenchVersion && (

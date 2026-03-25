@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
 import type { Product } from "@/lib/products"
 import { Button } from "@/components/ui/button"
-import { Minus, Plus, ShoppingBag, ShoppingCart, Users } from "lucide-react"
+import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react"
 import { trackAddToCart, generateEventId } from "@/lib/meta-pixel"
 import { trackAddToCart as trackTikTokAddToCart } from "@/lib/tiktok-events"
 import { getFbpFbc } from "@/lib/fbp-fbc"
@@ -44,21 +44,6 @@ export function AddToCartButton({ product, variant = "default", className, isFre
   // FR: custom quantity selector
   const [customQuantityFr, setCustomQuantityFr] = useState(5)
   const [useFrCustomQty, setUseFrCustomQty] = useState(false)
-  // FR: Social proof notification
-  const [recentBuyers, setRecentBuyers] = useState(24)
-
-  // Update social proof number periodically
-  useEffect(() => {
-    if (!isFrenchVersion) return
-    const interval = setInterval(() => {
-      setRecentBuyers(prev => {
-        const change = Math.random() > 0.5 ? 1 : -1
-        const newValue = prev + change
-        return Math.max(18, Math.min(32, newValue))
-      })
-    }, 8000)
-    return () => clearInterval(interval)
-  }, [isFrenchVersion])
   // EN Flexible Acoustic: default to 4 panels option (index 2)
   const [selectedQtyOptionEn, setSelectedQtyOptionEn] = useState(enQuantities[2])
   // Non-FR/EN flexible: simple quantity
@@ -244,20 +229,6 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
     return (
       <div className="flex flex-col gap-3 w-full">
-        {/* Social proof notification */}
-        <div className="flex items-center justify-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-2.5">
-          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-500/20">
-            <Users className="w-3.5 h-3.5 text-green-700" />
-          </div>
-          <span className="text-sm text-green-800 font-medium">
-            <span className="font-bold">{recentBuyers} personnes</span> viennent d&apos;acheter
-          </span>
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-          </span>
-        </div>
-
         {/* Header message */}
         <p className="text-sm text-gray-700 text-center font-medium">
           Choisissez la quantité désirée ou profitez de nos paquets
