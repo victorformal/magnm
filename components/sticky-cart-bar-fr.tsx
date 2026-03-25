@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useCart } from "@/lib/cart-context"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { ShoppingCart, Lock } from "lucide-react"
 import { BonusModalFr } from "@/components/bonus-modal-fr"
 
@@ -16,7 +16,11 @@ export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }
   const [showBonusModal, setShowBonusModal] = useState(false)
   const { totalItems, totalPrice } = useCart()
   const router = useRouter()
+  const pathname = usePathname()
   const hasItemsInCart = totalItems > 0
+  
+  // Hide sticky bar on checkout page
+  const isCheckoutPage = pathname?.includes("/checkout")
 
   useEffect(() => {
     const heroBottom = document.querySelector("[data-add-to-cart]")
@@ -65,7 +69,7 @@ export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }
     <>
       <div
         className={`fixed left-0 right-0 z-[999] bg-[#2C1810] border-t border-white/10 px-4 py-3 transition-all duration-300 ${
-          visible && hasItemsInCart ? "bottom-0" : "-bottom-20"
+          visible && hasItemsInCart && !isCheckoutPage ? "bottom-0" : "-bottom-20"
         }`}
         style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
       >
