@@ -47,6 +47,9 @@ export default function CheckoutFrPage() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    // Scroll to top when page loads
+    window.scrollTo({ top: 0, behavior: "instant" })
+
     // Check for bonus data
     try {
       const bonusRaw = sessionStorage.getItem("checkout_bonus_fr")
@@ -348,7 +351,7 @@ export default function CheckoutFrPage() {
 
         {/* Stripe Embedded Checkout */}
         <div className="rounded-xl bg-white border border-border shadow-sm p-5 mb-4">
-          <StripeCheckoutFr items={checkoutItems} onInitiateCheckout={handleInitiateCheckout} />
+          <StripeCheckoutFr items={checkoutItems} onInitiateCheckout={handleInitiateCheckout} bonusData={bonusData} />
 
           {/* Payment icons */}
           <div className="mt-4 flex items-center justify-center gap-2 flex-wrap">
