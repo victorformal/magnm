@@ -25,7 +25,7 @@ import { ExitIntentPopupFr } from "@/components/exit-intent-popup-fr"
 import { CountdownTimer } from "@/components/countdown-timer"
 import { ExitIntentPopup } from "@/components/exit-intent-popup"
 import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { PanelCalculatorFr } from "@/components/panel-calculator-fr"
 import { StickyCartBarFr } from "@/components/sticky-cart-bar-fr"
 import { FAQSectionFr } from "@/components/faq-section-fr"
@@ -117,6 +117,10 @@ export default function ClientProductPage({
   const [showStickyCta, setShowStickyCta] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+  const pathname = usePathname()
+  
+  // Hide sticky elements on checkout page
+  const isCheckoutPage = pathname?.includes("/checkout")
 
   // FR Order Summary state — shows after "Commander Maintenant" is clicked
   const [frOrderData, setFrOrderData] = useState<{ qty: number; price: number; totalPrice: number; ledFree: boolean } | null>(null)
@@ -766,7 +770,7 @@ export default function ClientProductPage({
       </div>
 
       {/* Sticky CTA for Mobile — aparece quando o botão principal sai da tela */}
-      {isFlexibleAcousticPanel && showStickyCta && (
+      {isFlexibleAcousticPanel && showStickyCta && !isCheckoutPage && (
         <div className="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.12)] px-4 py-3">
           <button
             type="button"
@@ -806,7 +810,7 @@ export default function ClientProductPage({
       )}
 
       {/* Sticky Cart Bar for Desktop - FR only */}
-      {isFrenchVersion && isFlexibleAcousticPanel && <StickyCartBarFr />}
+      {isFrenchVersion && isFlexibleAcousticPanel && !isCheckoutPage && <StickyCartBarFr />}
 
       {/* Bonus Modal - FR only */}
       {isFrenchVersion && (
