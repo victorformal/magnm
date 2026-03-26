@@ -491,15 +491,29 @@ export function getFeaturedProducts(): Product[] {
   return products.filter((p) => p.badge && !p.hidden)
 }
 
-// FR Market Functions - Only show products with -fr suffix (EUR currency)
-export function getVisibleProductsFr(): Product[] {
-  return products.filter((p) => p.slug.endsWith("-fr") && p.currency === "EUR")
+// FR Market Functions - Show all products but replace Flexible Acoustic Panel with FR version
+export function getVisibleProductsFrMarket(): Product[] {
+  return products.filter((p) => {
+    // Hide the English version of Flexible Acoustic Panel
+    if (p.slug === "flexible-acoustic-panel") return false
+    // Hide hidden products
+    if (p.hidden) return false
+    return true
+  })
 }
 
-export function getProductsByCategoryFr(category: string): Product[] {
-  return products.filter((p) => p.category === category && p.slug.endsWith("-fr") && p.currency === "EUR")
+export function getProductsByCategoryFrMarket(category: string): Product[] {
+  return products.filter((p) => {
+    if (p.slug === "flexible-acoustic-panel") return false
+    if (p.hidden) return false
+    return p.category === category
+  })
 }
 
-export function getFeaturedProductsFr(): Product[] {
-  return products.filter((p) => p.badge && p.slug.endsWith("-fr") && p.currency === "EUR")
+export function getFeaturedProductsFrMarket(): Product[] {
+  return products.filter((p) => {
+    if (p.slug === "flexible-acoustic-panel") return false
+    if (p.hidden) return false
+    return p.badge
+  })
 }

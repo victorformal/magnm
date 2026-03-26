@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { getVisibleProductsFr, getProductsByCategoryFr } from "@/lib/products"
+import { getVisibleProductsFrMarket, getProductsByCategoryFrMarket } from "@/lib/products"
 import { ProductCard } from "@/components/product-card"
 import { ProductFilters } from "@/components/product-filters"
 
@@ -10,8 +10,8 @@ interface ProductsPageProps {
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams
   const category = params.category
-  const visibleProducts = getVisibleProductsFr()
-  const filteredProducts = category ? getProductsByCategoryFr(category) : visibleProducts
+  const visibleProducts = getVisibleProductsFrMarket()
+  const filteredProducts = category ? getProductsByCategoryFrMarket(category) : visibleProducts
 
   return (
     <div className="py-12 lg:py-16">

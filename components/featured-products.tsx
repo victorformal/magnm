@@ -1,11 +1,11 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { getFeaturedProductsFr } from "@/lib/products"
+import { getFeaturedProductsFrMarket } from "@/lib/products"
 import { ProductCard } from "./product-card"
 import { Button } from "@/components/ui/button"
 
 export function FeaturedProducts() {
-  const featured = getFeaturedProductsFr()
+  const featured = getFeaturedProductsFrMarket()
 
   return (
     <section className="bg-secondary/30 py-20 lg:py-28">
