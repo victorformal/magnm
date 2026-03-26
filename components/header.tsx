@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 const navigation = [
-  { name: "Shop", href: "/products" },
-  { name: "Wall Panels", href: "/products?category=wall-panels" },
-  { name: "Lighting", href: "/products?category=lighting" },
-  { name: "Decor", href: "/products?category=decor" },
-  { name: "About", href: "/about" },
+  { name: "Boutique", href: "/products" },
+  { name: "Panneaux Muraux", href: "/products?category=wall-panels" },
+  { name: "Eclairage", href: "/products?category=lighting" },
+  { name: "Decoration", href: "/products?category=decor" },
+  { name: "A Propos", href: "/about" },
   { name: "Contact", href: "/contact" },
 ]
 
@@ -28,7 +28,7 @@ export function Header() {
           <SheetTrigger asChild className="lg:hidden">
             <Button variant="ghost" size="icon" className="-ml-2">
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Ouvrir le menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-80 bg-background">
@@ -38,7 +38,7 @@ export function Header() {
                 onClick={() => setOpen(false)}
                 className="font-serif text-2xl tracking-widest text-foreground"
               >
-                WOOD SHOP
+                WOOD BOIS
               </Link>
               <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
                 <X className="h-5 w-5" />
@@ -60,7 +60,7 @@ export function Header() {
         </Sheet>
 
         <Link href="/" className="flex items-center font-serif text-xl font-medium tracking-[0.2em] text-foreground transition-opacity hover:opacity-80 sm:text-2xl lg:text-2xl">
-          WOOD SHOP
+          WOOD BOIS
         </Link>
 
         {/* Desktop navigation */}
@@ -80,7 +80,7 @@ export function Header() {
         <Link href="/cart" className="relative">
           <Button variant="ghost" size="icon">
             <ShoppingBag className="h-5 w-5" />
-            <span className="sr-only">Cart</span>
+            <span className="sr-only">Panier</span>
           </Button>
           {totalItems > 0 && (
             <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-xs text-background">

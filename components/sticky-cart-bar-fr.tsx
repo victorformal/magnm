@@ -68,7 +68,7 @@ export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }
   return (
     <>
       <div
-        className={`fixed left-0 right-0 z-[999] bg-[#2C1810] border-t border-white/10 px-4 py-3 transition-all duration-300 ${
+        className={`fixed left-0 right-0 z-40 bg-[#2C1810] border-t border-white/10 px-4 py-3 transition-all duration-300 ${
           visible && hasItemsInCart && !isCheckoutPage ? "bottom-0" : "-bottom-20"
         }`}
         style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}

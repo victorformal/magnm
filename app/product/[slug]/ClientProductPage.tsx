@@ -767,7 +767,7 @@ export default function ClientProductPage({
 
       {/* Sticky CTA for Mobile — aparece quando o botão principal sai da tela */}
       {isFlexibleAcousticPanel && showStickyCta && (
-        <div className="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.12)] px-4 py-3">
+        <div className="fixed bottom-0 left-0 right-0 lg:hidden z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.12)] px-4 py-3">
           <button
             type="button"
             onClick={() => {
