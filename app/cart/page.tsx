@@ -6,7 +6,7 @@ import { useCart } from "@/lib/cart-context"
 import { CartItem } from "@/components/cart-item"
 import { Button } from "@/components/ui/button"
 import { PaymentRequestButton } from "@/components/payment-request-button"
-import { StripeCheckout } from "@/components/stripe-checkout"
+import { StripeCheckoutFr } from "@/components/stripe-checkout-fr"
 import { formatPrice } from "@/lib/price"
 import { trackInitiateCheckout, generateEventId } from "@/lib/meta-pixel"
 import { getFbpFbc } from "@/lib/fbp-fbc"
@@ -15,20 +15,18 @@ import { getStoredUTMs } from "@/lib/utm-client"
 export default function CartPage() {
   const { items, totalPrice, clearCart } = useCart()
 
-  const hasFlexiblePanel = items.some((item) => item.product.id === "prod_U2rtV5Q5yVJ2XV")
+  const hasFlexiblePanel = items.some((item) => item.product.slug === "flexible-acoustic-panel-fr")
   
   // Check if cart has products with mixed currencies (should never happen, but validate)
-  const currencies = items.map((item) => item.product.currency || "GBP")
+  const currencies = items.map((item) => item.product.currency || "EUR")
   const uniqueCurrencies = [...new Set(currencies)]
   const hasMixedCurrencies = uniqueCurrencies.length > 1
 
-  // Check if cart has French products (EUR currency)
-  const hasFrenchProducts = items.some((item) => item.product.currency === "EUR")
-  const currencyCode = hasFrenchProducts ? "EUR" : "GBP"
+  // All products should be EUR for French market
+  const currencyCode = "EUR"
 
   // Format prices using utility function to avoid floating point errors
   const formattedTotal = formatPrice(totalPrice, currencyCode)
-  const currencySymbol = currencyCode === "EUR" ? "€" : "£"
 
   const handleInitiateCheckout = () => {
     const eventId = generateEventId("ic")
@@ -73,11 +71,11 @@ export default function CartPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-md text-center">
             <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h1 className="mt-6 font-serif text-3xl">Your cart is empty</h1>
-            <p className="mt-4 text-muted-foreground">Looks like you haven&apos;t added any items to your cart yet.</p>
+            <h1 className="mt-6 font-serif text-3xl">Votre panier est vide</h1>
+            <p className="mt-4 text-muted-foreground">{"Il semble que vous n'ayez pas encore ajoute d'articles a votre panier."}</p>
             <Button asChild className="mt-8" size="lg">
               <Link href="/products">
-                Continue Shopping
+                Continuer les achats
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -97,18 +95,18 @@ export default function CartPage() {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
-            Continue Shopping
+            Continuer les achats
           </Link>
-          <h1 className="mt-4 font-serif text-4xl">Your Cart</h1>
+          <h1 className="mt-4 font-serif text-4xl">Votre Panier</h1>
         </div>
 
         {hasFlexiblePanel && (
           <div className="mb-8 flex items-center gap-3 rounded-md bg-amber-50 border border-amber-200 px-4 py-3">
             <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">Items in your cart are selling fast!</p>
+              <p className="text-sm font-semibold text-amber-800">Les articles dans votre panier se vendent vite !</p>
               <p className="text-xs text-amber-700">
-                Only 30 units of Flexible Acoustic Panel remaining. Complete your order now.
+                Seulement 30 unites de Panneau Acoustique Flexible restantes. Finalisez votre commande maintenant.
               </p>
             </div>
           </div>
@@ -118,9 +116,9 @@ export default function CartPage() {
           <div className="mb-8 flex items-center gap-3 rounded-md bg-red-50 border border-red-200 px-4 py-3">
             <AlertTriangle className="h-5 w-5 text-red-600 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-red-800">Invalid cart</p>
+              <p className="text-sm font-semibold text-red-800">Panier invalide</p>
               <p className="text-xs text-red-700">
-                Your cart contains products from different markets. Please clear your cart and select products from the same market.
+                Votre panier contient des produits de differents marches. Veuillez vider votre panier et selectionner des produits du meme marche.
               </p>
             </div>
           </div>
@@ -138,7 +136,7 @@ export default function CartPage() {
             {/* Clear Cart */}
             <div className="mt-6">
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={clearCart}>
-                Clear Cart
+                Vider le Panier
               </Button>
             </div>
           </div>
@@ -146,20 +144,20 @@ export default function CartPage() {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 bg-secondary p-6">
-              <h2 className="font-serif text-xl">Order Summary</h2>
+              <h2 className="font-serif text-xl">Resume de la Commande</h2>
 
               <div className="mt-6 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{hasFrenchProducts ? "Sous-total" : "Subtotal"}</span>
+                  <span className="text-muted-foreground">Sous-total</span>
                   <span>{formatPrice(totalPrice, currencyCode)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{hasFrenchProducts ? "Livraison" : "Shipping"}</span>
-                  <span>{hasFrenchProducts ? "Calcule a la caisse" : "Calculated at checkout"}</span>
+                  <span className="text-muted-foreground">Livraison</span>
+                  <span>Calcule a la caisse</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{hasFrenchProducts ? "TVA" : "Tax"}</span>
-                  <span>{hasFrenchProducts ? "Calcule a la caisse" : "Calculated at checkout"}</span>
+                  <span className="text-muted-foreground">TVA</span>
+                  <span>Calcule a la caisse</span>
                 </div>
               </div>
 
@@ -180,11 +178,11 @@ export default function CartPage() {
                   currency={currencyCode}
                   onSuccess={(paymentIntent) => {
                     console.log("[v0] Payment success:", paymentIntent)
-                    window.location.href = `/thank-you?session_id=${paymentIntent.id}`
+                    window.location.href = `/succes-fr?session_id=${paymentIntent.id}`
                   }}
                   onError={(error) => {
                     console.error("[v0] Payment error:", error)
-                    alert(`Payment failed: ${error}`)
+                    alert(`Echec du paiement: ${error}`)
                   }}
                 />
 
@@ -193,20 +191,20 @@ export default function CartPage() {
                     <div className="w-full border-t border-border"></div>
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-secondary px-2 text-muted-foreground">Or</span>
+                    <span className="bg-secondary px-2 text-muted-foreground">Ou</span>
                   </div>
                 </div>
 
                 {hasMixedCurrencies ? (
                   <div className="text-center text-sm text-red-600 font-semibold p-4 bg-red-50 rounded">
-                    Please clear your cart to proceed with checkout
+                    Veuillez vider votre panier pour proceder au paiement
                   </div>
                 ) : (
-                  <StripeCheckout items={items} onInitiateCheckout={handleInitiateCheckout} />
+                  <StripeCheckoutFr items={items} onInitiateCheckout={handleInitiateCheckout} />
                 )}
               </div>
 
-              <p className="mt-4 text-center text-xs text-muted-foreground">Secure checkout powered by Stripe</p>
+              <p className="mt-4 text-center text-xs text-muted-foreground">Paiement securise par Stripe</p>
             </div>
           </div>
         </div>

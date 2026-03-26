@@ -1,9 +1,14 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { categories } from "@/lib/products"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+
+const categoriesFr = [
+  { id: "wall-panels", name: "Panneaux Muraux", slug: "wall-panels" },
+  { id: "lighting", name: "Eclairage", slug: "lighting" },
+  { id: "decor", name: "Decoration", slug: "decor" },
+]
 
 export function ProductFilters() {
   const router = useRouter()
@@ -31,9 +36,9 @@ export function ProductFilters() {
           !currentCategory && "bg-foreground text-background hover:bg-foreground/90 hover:text-background",
         )}
       >
-        All
+        Tout
       </Button>
-      {categories.map((category) => (
+      {categoriesFr.map((category) => (
         <Button
           key={category.id}
           variant="outline"

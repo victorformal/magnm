@@ -14,7 +14,7 @@ export function TrendsSection() {
               <div className="aspect-[3/4] overflow-hidden">
                 <Image
                   src="/trend-japandi-interior-natural-wood.jpg"
-                  alt="Japandi interior with natural wood elements"
+                  alt="Interieur Japandi avec elements en bois naturel"
                   width={400}
                   height={533}
                   className="w-full h-full object-cover"
@@ -24,7 +24,7 @@ export function TrendsSection() {
               <div className="aspect-square overflow-hidden">
                 <Image
                   src="/trend-acoustic-panel-office-modern.jpg"
-                  alt="Modern office with acoustic panels"
+                  alt="Bureau moderne avec panneaux acoustiques"
                   width={400}
                   height={400}
                   className="w-full h-full object-cover"
@@ -36,7 +36,7 @@ export function TrendsSection() {
               <div className="aspect-square overflow-hidden">
                 <Image
                   src="/trend-minimalist-lamp-bedroom.jpg"
-                  alt="Minimalist lamp in bedroom setting"
+                  alt="Lampe minimaliste dans une chambre"
                   width={400}
                   height={400}
                   className="w-full h-full object-cover"
@@ -46,7 +46,7 @@ export function TrendsSection() {
               <div className="aspect-[3/4] overflow-hidden">
                 <Image
                   src="/trend-ceramic-decor-shelf.jpg"
-                  alt="Ceramic decor on minimalist shelf"
+                  alt="Decoration ceramique sur etagere minimaliste"
                   width={400}
                   height={533}
                   className="w-full h-full object-cover"
@@ -58,31 +58,30 @@ export function TrendsSection() {
 
           {/* Content */}
           <div className="lg:pl-8">
-            <span className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Design Trends</span>
+            <span className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Tendances Design</span>
             <h2 className="mt-4 font-serif text-3xl leading-tight sm:text-4xl lg:text-5xl">
-              The Art of Japandi Living
+              L'Art du Style Japandi
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              Where Japanese minimalism meets Scandinavian functionality. Our collection embodies the perfect balance
-              between warmth and simplicity, creating spaces that feel both serene and inviting.
+              Ou le minimalisme japonais rencontre la fonctionnalite scandinave. Notre collection incarne l'equilibre parfait entre chaleur et simplicite, creant des espaces a la fois sereins et accueillants.
             </p>
             <ul className="mt-8 space-y-4">
               <li className="flex items-start gap-3">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                <span className="text-muted-foreground">Natural materials that age beautifully over time</span>
+                <span className="text-muted-foreground">Materiaux naturels qui vieillissent magnifiquement avec le temps</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                <span className="text-muted-foreground">Clean lines with organic, handcrafted details</span>
+                <span className="text-muted-foreground">Lignes epurees avec des details organiques et artisanaux</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                <span className="text-muted-foreground">Neutral palettes that create calm, focused environments</span>
+                <span className="text-muted-foreground">Palettes neutres qui creent des environnements calmes et concentres</span>
               </li>
             </ul>
             <Button asChild className="mt-8" size="lg">
               <Link href="/products">
-                Explore the Collection
+                Explorer la Collection
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

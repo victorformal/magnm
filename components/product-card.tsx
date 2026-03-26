@@ -16,8 +16,18 @@ interface ProductCardProps {
 export function ProductCard({ product, priority = false }: ProductCardProps) {
   const { addItem } = useCart()
 
-  const isFlexibleAcousticPanel = product.id === "prod_U2rtV5Q5yVJ2XV"
+  const isFlexibleAcousticPanel = product.slug === "flexible-acoustic-panel-fr"
   const isExternalImage = product.images[0]?.startsWith("http")
+
+  // Translate badge for FR
+  const getBadgeText = (badge: string | undefined, onSale: boolean | undefined) => {
+    if (onSale) return "Offre de Lancement"
+    if (badge === "Bestseller" || badge === "Meilleure Vente") return "Meilleure Vente"
+    if (badge === "Popular" || badge === "Populaire") return "Populaire"
+    if (badge === "New" || badge === "Nouveau") return "Nouveau"
+    if (badge === "Essential" || badge === "Essentiel") return "Essentiel"
+    return badge
+  }
 
   return (
     <div className="group">
@@ -39,13 +49,13 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
                 product.onSale ? "bg-accent text-accent-foreground" : "bg-foreground text-background"
               }`}
             >
-              {product.onSale ? "Launch Offer" : product.badge}
+              {getBadgeText(product.badge, product.onSale)}
             </span>
           )}
           {isFlexibleAcousticPanel && (
             <span className="absolute right-3 top-3 flex items-center gap-1.5 bg-accent px-2.5 py-1.5 text-[10px] font-medium uppercase tracking-wider text-accent-foreground">
               <Flame className="h-3 w-3" />
-              Only 30 left!
+              Plus que 30 !
             </span>
           )}
         </div>
@@ -71,7 +81,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           size="icon"
           className="shrink-0 border-border/50 bg-transparent transition-all duration-200 hover:border-foreground/30 hover:bg-foreground/5"
           onClick={() => addItem(product)}
-          aria-label={`Add ${product.name} to cart`}
+          aria-label={`Ajouter ${product.name} au panier`}
         >
           <ShoppingBag className="h-4 w-4" />
         </Button>

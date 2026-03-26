@@ -36,9 +36,9 @@ export interface Product {
 }
 
 export const categories = [
-  { id: "wall-panels", name: "Wall Panels", slug: "wall-panels" },
-  { id: "lighting", name: "Lighting", slug: "lighting" },
-  { id: "decor", name: "Decor", slug: "decor" },
+  { id: "wall-panels", name: "Panneaux Muraux", slug: "wall-panels" },
+  { id: "lighting", name: "Eclairage", slug: "lighting" },
+  { id: "decor", name: "Decoration", slug: "decor" },
 ]
 
 export const products: Product[] = [
@@ -97,7 +97,6 @@ export const products: Product[] = [
     originalPrice: 29.80,
     currency: "EUR",
     category: "wall-panels",
-    hidden: true,
     images: [
       "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/panneu01-COvuniuy0UAMH2wAwPKmS9Tlev4Qrt.avif",
       "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/panneau02-qeu9jY1J99l7kquJK3L2fnpKCxJuHj.avif",
@@ -490,4 +489,17 @@ export function getProductsByCategory(category: string): Product[] {
 
 export function getFeaturedProducts(): Product[] {
   return products.filter((p) => p.badge && !p.hidden)
+}
+
+// FR Market Functions - Only show products with -fr suffix (EUR currency)
+export function getVisibleProductsFr(): Product[] {
+  return products.filter((p) => p.slug.endsWith("-fr") && p.currency === "EUR")
+}
+
+export function getProductsByCategoryFr(category: string): Product[] {
+  return products.filter((p) => p.category === category && p.slug.endsWith("-fr") && p.currency === "EUR")
+}
+
+export function getFeaturedProductsFr(): Product[] {
+  return products.filter((p) => p.badge && p.slug.endsWith("-fr") && p.currency === "EUR")
 }
