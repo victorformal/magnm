@@ -443,7 +443,6 @@ export default function ClientProductPage({
 
             {/* Add to Cart */}
             <div className="mt-8 flex flex-col gap-3">
-              {isFrenchVersion && <CountdownTimerFr />}
               {!isFrenchVersion && isFlexibleAcousticPanel && <CountdownTimer />}
               <AddToCartButton 
                 product={product} 
@@ -451,11 +450,6 @@ export default function ClientProductPage({
                 isEnglishFlexibleAcoustic={!isFrenchVersion && isFlexibleAcousticPanel}
                 onAddedToCart={isFrenchVersion ? handleFrAddedToCart : undefined}
               />
-              {isFrenchVersion && (
-                <p className="text-center text-xs text-muted-foreground">
-                  Expédition sous 24-48h • Livraison estimée 5 à 8 jours ouvrables
-                </p>
-              )}
               {!isFrenchVersion && isFlexibleAcousticPanel && (
                 <p className="text-center text-xs text-muted-foreground">
                   Dispatch within 24-48h • Estimated delivery 5-8 business days
