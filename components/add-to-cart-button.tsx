@@ -226,19 +226,13 @@ export function AddToCartButton({ product, variant = "default", className, isFre
     )
   }
 
-  // French version: upsell quantity selector + orange CTA button
+  // French version: simple quantity selector + Buy Now button
   if (isFrenchVersion) {
-    const selectedFr = selectedQtyOptionFr
     const UNIT_PRICE_FR = 14.50
     const customTotalFr = customQuantityFr * UNIT_PRICE_FR
 
     const handleCustomAdd = () => {
       handleBuyNow(customQuantityFr, customTotalFr)
-    }
-
-    const handlePackageSelect = (option: typeof frQuantities[0]) => {
-      setUseFrCustomQty(false)
-      setSelectedQtyOptionFr(option)
     }
 
     const handleAcceptBonus = () => {
@@ -269,187 +263,39 @@ export function AddToCartButton({ product, variant = "default", className, isFre
         onAcceptBonus={handleAcceptBonus}
         onDeclineBonus={handleDeclineBonus}
       />
-      <div className="flex flex-col gap-3 w-full">
-        {/* Header message */}
-        <p className="text-sm text-gray-700 text-center font-medium">
-          Choisissez la quantité désirée ou profitez de nos paquets
-        </p>
-
-        {/* Custom quantity selector */}
-        <div 
-          className={`rounded-lg border-2 px-4 py-3 transition-all ${
-            useFrCustomQty 
-              ? "border-[#FF6B00] bg-orange-50" 
-              : "border-gray-200 bg-white"
-          }`}
-        >
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">Quantité :</span>
-              <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setUseFrCustomQty(true)
-                    setCustomQuantityFr((q) => Math.max(1, q - 1))
-                  }}
-                  className="flex h-9 w-10 items-center justify-center transition-colors hover:bg-gray-100"
-                  aria-label="Diminuer la quantité"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-12 text-center text-base font-semibold text-gray-900">{customQuantityFr}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setUseFrCustomQty(true)
-                    setCustomQuantityFr((q) => q + 1)
-                  }}
-                  className="flex h-9 w-10 items-center justify-center transition-colors hover:bg-gray-100"
-                  aria-label="Augmenter la quantité"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-sm font-bold text-[#FF6B00]">€{customTotalFr.toFixed(2).replace(".", ",")}</span>
-              <span className="text-[10px] text-gray-500">{UNIT_PRICE_FR.toFixed(2).replace(".", ",")} EUR / panneau</span>
-            </div>
-          </div>
-          {useFrCustomQty && (
-            <button
-              type="button"
-              disabled={!product.inStock}
-              onClick={handleCustomAdd}
-              data-add-to-cart="true"
-              className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-3 px-6 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-              Ajouter {customQuantityFr} {customQuantityFr === 1 ? "panneau" : "panneaux"} - €{customTotalFr.toFixed(2).replace(".", ",")}
-            </button>
-          )}
-        </div>
-
-        {/* Package upsell cards */}
-        <div className="space-y-2">
-          {frQuantities.map((option) => {
-            const isSelected = !useFrCustomQty && selectedFr.qty === option.qty
-            return (
-              <button
-                key={option.qty}
-                type="button"
-                onClick={() => handlePackageSelect(option)}
-                className={`w-full rounded-lg border-2 px-4 py-3 transition-all text-left ${
-                  isSelected
-                    ? "border-[#FF6B00] bg-orange-50"
-                    : "border-gray-200 bg-white hover:border-gray-300"
-                }`}
-              >
-                {/* Top row: label + badge + price */}
-                <div className="flex items-center justify-between gap-3 mb-1.5">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-gray-900">{option.label}</span>
-                    {option.badge && (
-                      <span className={`text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                        option.badge.startsWith("Pack Pro") ? "bg-purple-600" : "bg-amber-600"
-                      }`}>
-                        {option.badge}
-                      </span>
-                    )}
-                    {option.ledFree && (
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-700 text-emerald-100">
-                        Kit LED OFFERT
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex flex-col items-end flex-shrink-0">
-                    <span className="text-xs text-gray-400 line-through">€{option.original.toFixed(2).replace(".", ",")}</span>
-                    <span className="text-sm font-bold text-gray-900">€{option.price.toFixed(2).replace(".", ",")}</span>
-                  </div>
-                </div>
-                {/* Coverage info */}
-                <div className="text-[11px] text-gray-500 mb-1">
-                  {option.coverage} | Idéal pour : {option.ideal}
-                </div>
-                {/* Bottom row: savings + free shipping */}
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="text-green-700 font-medium">Économisez {option.savings}</span>
-                  {option.freeShipping && <span className="text-green-700 font-medium">Livraison gratuite</span>}
-                </div>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* LED kit nudge — shown only when pack of 12 is NOT selected */}
-        {!selectedFr.ledFree && (
-          <div className="flex items-start gap-2 rounded-lg border border-dashed border-amber-400 bg-amber-50 px-3 py-2.5 text-xs text-gray-700">
-            <span className="text-base leading-none flex-shrink-0">💡</span>
-            <span>
-              Passez à <strong className="text-[#FF6B00]">12 Panneaux</strong> et recevez le{" "}
-              <a
-                href="/product/recessed-led-strip-lighting-fr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold underline underline-offset-2 text-emerald-800 hover:text-emerald-600"
-              >
-                Kit Ruban LED Encastré
-              </a>{" "}
-              (valeur €49,00) <strong>OFFERT</strong> éclairage parfait inclus.
-            </span>
-          </div>
-        )}
-
-        {/* LED kit banner — shown only when pack of 12 is selected */}
-        {selectedFr.ledFree && (
-          <div className="rounded-lg bg-emerald-800 text-white px-4 py-3 text-xs leading-relaxed">
-            <p className="font-bold text-emerald-200 text-[10px] uppercase tracking-wider mb-1">Inclus gratuitement</p>
-            <p className="font-semibold text-sm mb-0.5">
-              <a
-                href="/product/recessed-led-strip-lighting-fr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 text-white hover:text-emerald-200"
-              >
-                Kit Ruban LED Encastré
-              </a>{" "}
-              OFFERT !
-            </p>
-            <p className="text-emerald-100 opacity-90">
-              8 strips (18&#34;, 26&#34;, 34&#34;, 42&#34; / 2 de chaque), driver LED premium, variateur tactile 10 �� 100%, lumière blanche chaude 3000K. Valeur : €49,00.
-            </p>
-          </div>
-        )}
-
-        {/* Orange CTA button with dynamic copy - only show when package is selected */}
-        {!useFrCustomQty && (
+      <div className="flex flex-col gap-4 w-full items-center">
+        {/* Simple quantity selector */}
+        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
           <button
             type="button"
-            disabled={!product.inStock}
-            onClick={() => handleBuyNow()}
-            data-add-to-cart="true"
-            className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => setCustomQuantityFr((q) => Math.max(1, q - 1))}
+            className="flex h-12 w-14 items-center justify-center transition-colors hover:bg-gray-100"
+            aria-label="Diminuer la quantité"
           >
-            <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-            Ajouter {selectedFr.qty} panneaux - €{selectedFr.price.toFixed(2).replace(".", ",")}
+            <Minus className="h-4 w-4 text-gray-600" />
           </button>
-        )}
-
-        {/* Price per panel anchor */}
-        {!useFrCustomQty && (
-          <p className="text-center text-xs text-gray-600">
-            soit {(selectedFr.price / selectedFr.qty).toFixed(2).replace(".", ",")} EUR / panneau | Économisez {Math.round((1 - selectedFr.price / selectedFr.original) * 100)}% vs pièce unique
-          </p>
-        )}
-
-        {/* Trust signals row */}
-        <div className="flex items-center justify-center gap-4 flex-wrap text-[11px] text-gray-500">
-          <span className="flex items-center gap-1">🔒 Paiement sécurisé</span>
-          <span className="flex items-center gap-1">🚚 Livraison gratuite</span>
-          <span className="flex items-center gap-1">↩ Retour 30j gratuit</span>
-          <span className="flex items-center gap-1">🛡 Garantie 5 ans</span>
+          <span className="w-16 text-center text-lg font-semibold text-gray-900">{customQuantityFr}</span>
+          <button
+            type="button"
+            onClick={() => setCustomQuantityFr((q) => q + 1)}
+            className="flex h-12 w-14 items-center justify-center transition-colors hover:bg-gray-100"
+            aria-label="Augmenter la quantité"
+          >
+            <Plus className="h-4 w-4 text-gray-600" />
+          </button>
         </div>
+
+        {/* Buy Now button */}
+        <button
+          type="button"
+          disabled={!product.inStock}
+          onClick={handleCustomAdd}
+          data-add-to-cart="true"
+          className="w-full flex items-center justify-center gap-2 rounded-full bg-[#2D2A26] hover:bg-[#1a1816] text-white font-medium text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ShoppingCart className="h-5 w-5 flex-shrink-0" />
+          Buy Now - {customTotalFr.toFixed(2).replace(".", ",")} EUR
+        </button>
       </div>
       </>
     )
