@@ -16,7 +16,7 @@ const _inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const _playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" })
 
 export const metadata: Metadata = {
-  title: "WOOD OF GREEN | Panneaux Acoustiques en Bois & Design Interieur Premium",
+  title: "WOOD | Panneaux Acoustiques en Bois & Design Interieur Premium",
   description:
     "Panneaux muraux en lattes de bois premium, solutions acoustiques et decoration interieure selectionnee. Artisanat europeen pour interieurs modernes.",
   keywords: ["panneaux bois", "panneaux acoustiques", "design interieur", "decoration maison", "panneaux muraux premium"],
