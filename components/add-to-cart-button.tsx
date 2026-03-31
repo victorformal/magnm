@@ -24,9 +24,13 @@ interface AddToCartButtonProps {
 
 // FR upsell quantity options — base price €14,50/panneau
 // original = qty × 14.50 | pack price = discounted total | savings = original - pack
+// Note: ledFree is now determined dynamically based on total >= €100
 const frQuantities = [
-  { qty: 12, price: 249.00, original: 174.00, label: "12 Panneaux", badge: "Pack Pro",         savings: "€75,00",  freeShipping: true,  ledFree: true,  coverage: "~36 m²", ideal: "Suite complète" },
+  { qty: 12, price: 249.00, original: 174.00, label: "12 Panneaux", badge: "Pack Pro",         savings: "€75,00",  freeShipping: true,  coverage: "~36 m²", ideal: "Suite complète" },
 ]
+
+// Threshold for unlocking LED Kit bonus
+const LED_BONUS_THRESHOLD = 100
 
 // EN upsell quantity options for Flexible Acoustic Panel
 const enQuantities = [
@@ -164,7 +168,8 @@ export function AddToCartButton({ product, variant = "default", className, isFre
       const finalQty = overrideQty ?? selectedQtyOptionFr.qty
       const finalTotalPrice = overridePrice ?? frEffectiveTotal
       const finalUnitPrice = finalTotalPrice / finalQty
-      const finalLedFree = overrideQty ? false : selectedQtyOptionFr.ledFree
+      // LED Kit bonus is unlocked when total >= €100
+      const finalLedFree = finalTotalPrice >= LED_BONUS_THRESHOLD
       
       const orderData = {
         productId: product.id,
