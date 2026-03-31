@@ -38,7 +38,7 @@ export function Header() {
                 onClick={() => setOpen(false)}
                 className="font-serif text-2xl tracking-widest text-foreground"
               >
-                WOOD OF GREEN
+                WOOD
               </Link>
               <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
                 <X className="h-5 w-5" />
@@ -60,7 +60,7 @@ export function Header() {
         </Sheet>
 
         <Link href="/" className="flex items-center font-serif text-xl font-medium tracking-[0.2em] text-foreground transition-opacity hover:opacity-80 sm:text-2xl lg:text-2xl">
-          WOOD OF GREEN
+          WOOD
         </Link>
 
         {/* Desktop navigation */}
