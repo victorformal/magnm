@@ -11,6 +11,7 @@ import { formatPrice } from "@/lib/price"
 import { trackInitiateCheckout, generateEventId } from "@/lib/meta-pixel"
 import { getFbpFbc } from "@/lib/fbp-fbc"
 import { getStoredUTMs } from "@/lib/utm-client"
+import { BonusProgressBar } from "@/components/bonus-progress-bar"
 
 export default function CartPage() {
   const { items, totalPrice, clearCart } = useCart()
@@ -123,6 +124,9 @@ export default function CartPage() {
             </div>
           </div>
         )}
+
+        {/* Bonus Progress Bar - Unlock at €100 */}
+        <BonusProgressBar currentTotal={totalPrice} threshold={100} className="mb-8" />
 
         <div className="grid gap-12 lg:grid-cols-3">
           {/* Cart Items */}

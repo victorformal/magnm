@@ -10,6 +10,7 @@ import { ArrowLeft, Lock, Package, RotateCcw, Star, Gift, Check, Wrench } from "
 import { trackInitiateCheckout, generateEventId } from "@/lib/meta-pixel"
 import { getFbpFbc } from "@/lib/fbp-fbc"
 import { getStoredUTMs } from "@/lib/utm-client"
+import { BonusProgressBar } from "@/components/bonus-progress-bar"
 
 // Shape that comes from sessionStorage
 interface StoredOrder {
@@ -170,6 +171,9 @@ export default function CheckoutFrPage() {
           </div>
         </div>
 
+        {/* Bonus Progress Bar - Unlock at €100 */}
+        <BonusProgressBar currentTotal={totalEur} threshold={100} className="mb-4" />
+
         {/* Order Summary Card */}
         <div className="rounded-xl bg-white border border-border shadow-sm p-5 mb-4">
           <h2 className="text-sm font-semibold uppercase tracking-wider mb-4">
@@ -195,8 +199,8 @@ export default function CheckoutFrPage() {
             <p className="text-sm font-semibold flex-shrink-0">€{totalEur.toFixed(2)}</p>
           </div>
 
-          {/* LED kit bonus item — only shown for 12-panel pack */}
-          {storedOrder.ledFree && (
+          {/* LED kit bonus item — shown when total >= €100 */}
+          {totalEur >= 100 && (
             <div className="flex items-center gap-3 mb-4 rounded-lg border border-dashed border-emerald-400 bg-emerald-50 px-3 py-2.5">
               <a href={LED_KIT_PRODUCT_URL} target="_blank" rel="noopener noreferrer" className="relative w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0 block border border-emerald-200">
                 <Image
@@ -216,7 +220,7 @@ export default function CheckoutFrPage() {
                 >
                   Kit Ruban LED Encastré
                 </a>
-                <p className="text-xs text-emerald-700 mt-0.5">Bonus Pack Pro, inclus gratuitement</p>
+                <p className="text-xs text-emerald-700 mt-0.5">Bonus commande +€100, inclus gratuitement</p>
               </div>
               <p className="text-sm font-semibold flex-shrink-0 text-emerald-700 line-through opacity-60">€49,00</p>
             </div>

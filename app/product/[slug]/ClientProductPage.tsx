@@ -34,6 +34,7 @@ import { SocialProofInlineFr } from "@/components/social-proof-inline-fr"
 import { RatingBreakdownFr } from "@/components/rating-breakdown-fr"
 import { SalesNotificationToast } from "@/components/sales-notification-toast"
 import { BonusModalFr } from "@/components/bonus-modal-fr"
+import { BonusProgressBar } from "@/components/bonus-progress-bar"
 
 interface ClientProductPageProps {
   product: any
@@ -650,6 +651,9 @@ export default function ClientProductPage({
           >
             <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">Récapitulatif de Votre Commande</h2>
             
+            {/* Bonus Progress Bar */}
+            <BonusProgressBar currentTotal={frOrderData.totalPrice} threshold={100} className="mb-6" />
+            
             {/* Product summary */}
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-orange-200">
               <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-white flex-shrink-0 border border-orange-200">
@@ -667,8 +671,8 @@ export default function ClientProductPage({
               <p className="text-lg font-bold">€{frOrderData.totalPrice.toFixed(2).replace(".", ",")}</p>
             </div>
 
-            {/* LED kit bonus — only for 12 panels */}
-            {frOrderData.ledFree && (
+            {/* LED kit bonus — shown when total >= €100 */}
+            {frOrderData.totalPrice >= 100 && (
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-orange-200 bg-emerald-50 rounded-lg p-3 -mx-3">
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0 border border-emerald-300">
                   <Image
@@ -681,7 +685,7 @@ export default function ClientProductPage({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm text-emerald-800">Kit Ruban LED Encastré</p>
-                  <p className="text-xs text-emerald-700">Bonus Pack Pro OFFERT</p>
+                  <p className="text-xs text-emerald-700">Bonus commande +€100 OFFERT</p>
                 </div>
                 <p className="text-sm font-semibold text-emerald-700 line-through opacity-60">€49,00</p>
               </div>
