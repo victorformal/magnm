@@ -233,7 +233,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
   // French version: simple quantity selector + Buy Now button
   if (isFrenchVersion) {
-    const UNIT_PRICE_FR = 14.49
+    const UNIT_PRICE_FR = 14.39
     const customTotalFr = customQuantityFr * UNIT_PRICE_FR
 
     const handleCustomAdd = () => {
