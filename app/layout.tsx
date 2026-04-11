@@ -28,7 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID || "1139772708143683"
+  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID || "2453601435024296"
   
   return (
     <html lang="fr">

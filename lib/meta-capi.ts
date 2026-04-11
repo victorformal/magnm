@@ -129,7 +129,7 @@ export async function sendCAPIEvent(params: {
   }
 
   try {
-    const pixelId = process.env.META_PIXEL_ID || "1139772708143683"
+    const pixelId = process.env.META_PIXEL_ID || "2453601435024296"
 
     const response = await fetch(
       `https://graph.facebook.com/${META_API_VERSION}/${pixelId}/events?access_token=${accessToken}`,

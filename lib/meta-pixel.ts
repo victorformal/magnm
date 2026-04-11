@@ -1,7 +1,7 @@
 // Meta Pixel client-side utilities
 // Primary (and ONLY) Pixel ID from environment variable
 
-export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "1139772708143683"
+export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "2453601435024296"
 
 // Declare fbq type for TypeScript
 declare global {
