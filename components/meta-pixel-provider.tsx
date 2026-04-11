@@ -10,7 +10,7 @@ declare global {
 // ONLY Pixel ID from environment variable
 // The pixel script is loaded via layout.tsx <head> with strategy="beforeInteractive"
 // This provider only renders the <noscript> fallback and wraps children.
-const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "2453601435024296"
+const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "1139772708143683"
 
 export function MetaPixelProvider({ children }: { children: React.ReactNode }) {
   return (

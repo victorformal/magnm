@@ -34,7 +34,7 @@ export function getPixelForCurrency(currency: string): PixelConfig {
 
   // Fallback to primary pixel
   return {
-    pixelId: process.env.META_PIXEL_ID || "2453601435024296",
+    pixelId: process.env.META_PIXEL_ID || "1139772708143683",
     accessToken: process.env.META_ACCESS_TOKEN || "",
   }
 }
@@ -55,7 +55,7 @@ export function getAllConfiguredPixels(): PixelConfig[] {
 
   // Ensure primary pixel is always included
   const primary = {
-    pixelId: process.env.META_PIXEL_ID || "2453601435024296",
+    pixelId: process.env.META_PIXEL_ID || "1139772708143683",
     accessToken: process.env.META_ACCESS_TOKEN || "",
   }
   if (primary.pixelId && primary.accessToken && !seen.has(primary.pixelId)) {
@@ -215,7 +215,7 @@ async function _sendToPixel(
 // Sends an event to the primary pixel (backward-compatible)
 export async function sendMetaEvent(data: MetaEventData): Promise<MetaApiResponse> {
   const pixel: PixelConfig = {
-    pixelId: process.env.META_PIXEL_ID || "2453601435024296",
+    pixelId: process.env.META_PIXEL_ID || "1139772708143683",
     accessToken: process.env.META_ACCESS_TOKEN || "",
   }
   return _sendToPixel(data, pixel)
