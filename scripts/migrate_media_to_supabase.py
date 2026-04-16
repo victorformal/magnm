@@ -31,7 +31,7 @@ MAP_PATH   = ROOT / "scripts" / "media-url-map.json"
 
 MEDIA_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg", ".gif", ".mp4", ".webm"}
 
-url_map: dict[str, str] = {}
+url_map = {}
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ def get_mime(path: str) -> str:
     return mime or "application/octet-stream"
 
 
-def upload_bytes(storage_path: str, data: bytes, content_type: str) -> str | None:
+def upload_bytes(storage_path: str, data: bytes, content_type: str):
     """Faz upload via REST API do Supabase Storage e retorna URL pública."""
     encoded_path = urllib.parse.quote(storage_path, safe="/")
     upload_url = f"{STORAGE_UPLOAD}/{encoded_path}"
