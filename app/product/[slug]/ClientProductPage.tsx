@@ -439,7 +439,7 @@ export default function ClientProductPage({
             )}
 
             {/* Color Selector */}
-            {product.colors && product.colors.length > 0 && <ColorSelector colors={product.colors} />}
+            {product.colors && product.colors.length > 0 && <ColorSelector colors={product.colors} isFrench={isFrenchVersion} />}
             {product.styles && product.styles.length > 0 && <StyleSelector styles={product.styles} />}
 
             {/* Add to Cart */}

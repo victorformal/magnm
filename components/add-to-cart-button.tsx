@@ -233,7 +233,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
 
   // French version: simple quantity selector + Buy Now button
   if (isFrenchVersion) {
-    const UNIT_PRICE_FR = 14.59
+    const UNIT_PRICE_FR = product.price ?? 72.95
     const customTotalFr = customQuantityFr * UNIT_PRICE_FR
 
     const handleCustomAdd = () => {
@@ -299,7 +299,7 @@ export function AddToCartButton({ product, variant = "default", className, isFre
           className="w-full flex items-center justify-center gap-2 rounded-full bg-[#2D2A26] hover:bg-[#1a1816] text-white font-medium text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Buy Now - {customTotalFr.toFixed(2).replace(".", ",")} EUR
+          Commander — {customTotalFr.toFixed(2).replace(".", ",")} €
         </button>
       </div>
       </>

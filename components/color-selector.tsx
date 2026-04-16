@@ -8,9 +8,10 @@ import type { ProductColor } from "@/lib/products"
 interface ColorSelectorProps {
   colors: ProductColor[]
   onColorChange?: (color: ProductColor) => void
+  isFrench?: boolean
 }
 
-export function ColorSelector({ colors, onColorChange }: ColorSelectorProps) {
+export function ColorSelector({ colors, onColorChange, isFrench = false }: ColorSelectorProps) {
   const [selectedColor, setSelectedColor] = useState<ProductColor>(colors[0])
 
   const handleColorSelect = (color: ProductColor) => {
@@ -23,7 +24,7 @@ export function ColorSelector({ colors, onColorChange }: ColorSelectorProps) {
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold uppercase tracking-wider">Color</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wider">{isFrench ? "Coloris" : "Color"}</h3>
         <span className="text-sm text-muted-foreground">{selectedColor.name}</span>
       </div>
 
