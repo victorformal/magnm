@@ -763,47 +763,29 @@ export default function ClientProductPage({
         )}
       </div>
 
-      {/* Sticky CTA for Mobile — aparece quando o botão principal sai da tela */}
-      {isFlexibleAcousticPanel && showStickyCta && (
+      {/* Sticky CTA for Mobile — EN only (FR uses StickyCartBarFr instead) */}
+      {isFlexibleAcousticPanel && !isFrenchVersion && showStickyCta && (
         <div className="fixed bottom-0 left-0 right-0 lg:hidden z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.12)] px-4 py-3">
           <button
             type="button"
             onClick={() => {
-              if (isFrenchVersion) {
-                // FR: if Order Summary already visible, scroll to it; otherwise click the add button
-                if (frOrderData) {
-                  const orderSummary = document.getElementById("order-summary-fr")
-                  if (orderSummary) {
-                    orderSummary.scrollIntoView({ behavior: "smooth", block: "start" })
-                  }
-                } else {
-                  const addButton = document.querySelector("[data-add-to-cart]") as HTMLElement
-                  if (addButton) {
-                    addButton.scrollIntoView({ behavior: "smooth", block: "center" })
-                    addButton.click()
-                  }
-                }
-              } else {
-                const addButton = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
-                if (addButton) {
-                  addButton.scrollIntoView({ behavior: "smooth" })
-                }
+              const addButton = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
+              if (addButton) {
+                addButton.scrollIntoView({ behavior: "smooth" })
               }
             }}
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 transition-colors shadow-lg"
           >
             <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-            {isFrenchVersion 
-              ? (frOrderData ? "Finaliser Ma Commande" : "Commander Maintenant") 
-              : "Order Now £60.00"}
+            Order Now £60.00
           </button>
           <p className="text-center text-[10px] text-muted-foreground mt-1.5">
-            {isFrenchVersion ? "Paiement 100% Sécurisé • Livraison 5-8 jours" : "100% Secure Payment • Delivery 5-8 days"}
+            100% Secure Payment • Delivery 5-8 days
           </p>
         </div>
       )}
 
-      {/* Sticky Cart Bar for Desktop - FR only */}
+      {/* Sticky Cart Bar — FR only (handles both mobile and desktop) */}
       {isFrenchVersion && isFlexibleAcousticPanel && <StickyCartBarFr />}
 
       {/* Bonus Modal - FR only */}
