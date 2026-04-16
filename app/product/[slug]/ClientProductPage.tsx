@@ -54,25 +54,25 @@ const frenchTranslations = {
   backToProducts: "Retour aux produits",
   inStock: "En stock",
   outOfStock: "Rupture de stock",
-  limitedStock: "Stock limite - Commandez maintenant!",
-  selectColor: "Selectionnez la couleur",
-  selectStyle: "Selectionnez le style",
-  features: "Caracteristiques",
+  limitedStock: "Stock limité — Commandez maintenant !",
+  selectColor: "Sélectionnez la couleur",
+  selectStyle: "Sélectionnez le style",
+  features: "Caractéristiques",
   dimensions: "Dimensions",
-  material: "Materiau",
+  material: "Matériau",
   freeShipping: "Livraison gratuite",
   freeShippingDesc: "Livraison gratuite sur toutes les commandes",
   easyReturns: "Retours faciles",
   easyReturnsDesc: "Retours sous 30 jours",
-  securePayment: "Paiement securise",
-  securePaymentDesc: "Vos informations sont protegees",
-  frequentlyBought: "Frequemment achetes ensemble",
+  securePayment: "Paiement sécurisé",
+  securePaymentDesc: "Vos informations sont protégées",
+  frequentlyBought: "Fréquemment achetés ensemble",
   addBothToCart: "Ajouter les deux au panier",
   youMightLike: "Vous pourriez aussi aimer",
   customerReviews: "Avis clients",
-  wasPrice: "etait",
-  save: "Economisez",
-  off: "de reduction",
+  wasPrice: "était",
+  save: "Économisez",
+  off: "de réduction",
 }
 
 const englishTranslations = {
@@ -282,7 +282,7 @@ export default function ClientProductPage({
             {product.onSale && product.originalPrice ? (
               <div className="mt-4">
                 <span className="inline-block px-2.5 py-1 text-xs font-medium bg-red-600 text-white rounded-sm mb-3">
-                  {isFrenchVersion ? "Offre limitee" : "Limited time deal"}
+                  {isFrenchVersion ? "Offre limitée" : "Limited time deal"}
                 </span>
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-xl sm:text-2xl font-medium text-red-600">-{discountPercent}%</span>
@@ -291,7 +291,7 @@ export default function ClientProductPage({
                     {((product.price % 1) * 100).toFixed(0).padStart(2, "0")}
                   </span>
                   {isFlexibleAcousticPanel && (
-                    <span className="text-sm sm:text-base text-muted-foreground ml-1">/ {isFrenchVersion ? "piece" : "piece"}</span>
+                    <span className="text-sm sm:text-base text-muted-foreground ml-1">/ {isFrenchVersion ? "panneau" : "piece"}</span>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5 mt-1 flex-wrap">
@@ -348,14 +348,14 @@ export default function ClientProductPage({
                 {/* How It Works - 3 Steps */}
                 <div className="bg-accent/5 border border-accent/20 rounded-lg p-4">
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-center mb-4">
-                    {isFrenchVersion ? "Comment Ca Marche" : "How It Works"}
+                    {isFrenchVersion ? "Comment ça marche" : "How It Works"}
                   </h3>
                   <div className="grid grid-cols-3 gap-3">
                     <div className="flex flex-col items-center text-center">
                       <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
                         <span className="text-accent font-bold">1</span>
                       </div>
-                      <p className="text-xs font-medium">{isFrenchVersion ? "Decollez l'adhesif" : "Peel the adhesive"}</p>
+                      <p className="text-xs font-medium">{isFrenchVersion ? "Décollez l'adhésif" : "Peel the adhesive"}</p>
                     </div>
                     <div className="flex flex-col items-center text-center">
                       <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
@@ -367,7 +367,7 @@ export default function ClientProductPage({
                       <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2">
                         <span className="text-accent font-bold">3</span>
                       </div>
-                      <p className="text-xs font-medium">{isFrenchVersion ? "Admirez le resultat" : "Enjoy!"}</p>
+                      <p className="text-xs font-medium">{isFrenchVersion ? "Admirez le résultat" : "Enjoy!"}</p>
                     </div>
                   </div>
                 </div>
@@ -405,30 +405,30 @@ export default function ClientProductPage({
                     <span className="font-medium text-foreground">{isFrenchVersion ? "Taille:" : "Size:"}</span> 270 × 110 cm, {isFrenchVersion ? "couvre jusqu'à 3m²" : "covers up to 3m²"}
                   </p>
                   <p className="text-xs italic">
-                    {isFrenchVersion ? "Parfait pour les murs TV, les murs de caracteristique et les zones d'accent." : "Ideal for TV walls, feature walls and accent areas."}
+                    {isFrenchVersion ? "Parfait pour les murs TV, les murs de caractéristique et les zones d'accent." : "Ideal for TV walls, feature walls and accent areas."}
                   </p>
                   <p className="break-words">
-                    <span className="font-medium text-foreground">{isFrenchVersion ? "Couleurs disponibles:" : "Available colors:"}</span> {isFrenchVersion ? "Chene Naturel, Chene Fume, Noyer, Chene Gris" : "Natural Oak, Smoked Oak, Walnut, Grey Oak"}
+                    <span className="font-medium text-foreground">{isFrenchVersion ? "Coloris disponibles :" : "Available colors:"}</span> {isFrenchVersion ? "Naturel, Noyer, Noir, Gris" : "Natural Oak, Smoked Oak, Walnut, Grey Oak"}
                   </p>
                 </div>
 
                 {/* Certifications & Features Grid */}
                 <div className="mt-8 grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                   <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
-                    <h4 className="font-semibold text-sm sm:text-base">NRC 0.80</h4>
-                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Excellent Sound Absorption</p>
+                    <h4 className="font-semibold text-sm sm:text-base">NRC 0,80</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{isFrenchVersion ? "Absorption acoustique (certifié SGS)" : "Excellent Sound Absorption"}</p>
                   </div>
                   <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
-                    <h4 className="font-semibold text-sm sm:text-base">E1 Certified</h4>
-                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Low Formaldehyde Emission</p>
+                    <h4 className="font-semibold text-sm sm:text-base">{isFrenchVersion ? "Certifié E1" : "E1 Certified"}</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{isFrenchVersion ? "Faible émission formaldéhyde" : "Low Formaldehyde Emission"}</p>
                   </div>
                   <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
-                    <h4 className="font-semibold text-sm sm:text-base">Easy Install</h4>
-                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">DIY Friendly Setup</p>
+                    <h4 className="font-semibold text-sm sm:text-base">{isFrenchVersion ? "Installation facile" : "Easy Install"}</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{isFrenchVersion ? "Sans outils, en 30 min" : "DIY Friendly Setup"}</p>
                   </div>
                   <div className="rounded-lg bg-secondary/50 p-3 sm:p-4 text-center">
-                    <h4 className="font-semibold text-sm sm:text-base">6 Colors</h4>
-                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Match Any Interior</p>
+                    <h4 className="font-semibold text-sm sm:text-base">{isFrenchVersion ? "4 Coloris" : "4 Colors"}</h4>
+                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{isFrenchVersion ? "S'adapte à tout intérieur" : "Match Any Interior"}</p>
                   </div>
                 </div>
 
@@ -464,7 +464,7 @@ export default function ClientProductPage({
                 <Truck className="h-5 w-5 text-muted-foreground" />
                 <span className="mt-2 text-[10px] sm:text-xs text-muted-foreground leading-tight">
                   {isFrenchVersion ? "Livraison gratuite" : "Free Shipping"}
-                  <br className="sm:hidden" /> {isFrenchVersion ? "des 80€" : "Over £80"}
+                  <br className="sm:hidden" /> {isFrenchVersion ? "dès 80 €" : "Over £80"}
                 </span>
               </div>
               <div className="flex flex-col items-center text-center">
@@ -480,7 +480,7 @@ export default function ClientProductPage({
             {/* Frequently Bought Together */}
             {frequentlyBoughtTogether.length > 0 && (
               <div className="mt-8 border-t border-border pt-8">
-                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4">{isFrenchVersion ? "Frequemment achetes ensemble" : "Frequently Bought Together"}</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-4">{isFrenchVersion ? "Fréquemment achetés ensemble" : "Frequently Bought Together"}</h2>
                 <div className="flex flex-col gap-4">
                   {/* Products */}
                   <div className="flex flex-wrap items-center gap-3">
