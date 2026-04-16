@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { useCart } from "@/lib/cart-context"
 import { useRouter, usePathname } from "next/navigation"
 import { ShoppingCart, Lock } from "lucide-react"
-import { BonusModalFr } from "@/components/bonus-modal-fr"
 
 interface StickyCartBarFrProps {
   selectedPrice?: number
@@ -13,7 +12,6 @@ interface StickyCartBarFrProps {
 
 export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }: StickyCartBarFrProps) {
   const [visible, setVisible] = useState(false)
-  const [showBonusModal, setShowBonusModal] = useState(false)
   const { totalItems, totalPrice } = useCart()
   const router = useRouter()
   const pathname = usePathname()
@@ -41,12 +39,7 @@ export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }
   }
 
   const handleFinishOrder = () => {
-    // Show bonus modal instead of going directly to checkout
-    setShowBonusModal(true)
-  }
-
-  const handleAcceptBonus = () => {
-    // Store bonus info in sessionStorage
+    // Store bonus info in sessionStorage and go directly to checkout
     sessionStorage.setItem("checkout_bonus_fr", JSON.stringify({
       bonusPanels: 5,
       cleanerIncluded: true,
@@ -54,25 +47,16 @@ export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }
       installationCode: "AXB8930M9",
       bonusValue: 127.00
     }))
-    setShowBonusModal(false)
-    router.push("/checkout-fr")
-  }
-
-  const handleDeclineBonus = () => {
-    // Clear any bonus info
-    sessionStorage.removeItem("checkout_bonus_fr")
-    setShowBonusModal(false)
     router.push("/checkout-fr")
   }
 
   return (
-    <>
-      <div
-        className={`fixed left-0 right-0 z-40 bg-[#2C1810] border-t border-white/10 px-4 py-3 transition-all duration-300 ${
-          visible && hasItemsInCart && !isCheckoutPage ? "bottom-0" : "-bottom-20"
-        }`}
-        style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
-      >
+    <div
+      className={`fixed left-0 right-0 z-40 bg-[#2C1810] border-t border-white/10 px-4 py-3 transition-all duration-300 ${
+        visible && hasItemsInCart && !isCheckoutPage ? "bottom-0" : "-bottom-20"
+      }`}
+      style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+    >
         <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-4 flex-wrap">
           {hasItemsInCart && (
             <>
@@ -104,15 +88,6 @@ export function StickyCartBarFr({ selectedPrice = 24.90, originalPrice = 29.80 }
             </>
           )}
         </div>
-      </div>
-
-      {/* Bonus Modal */}
-      <BonusModalFr
-        isOpen={showBonusModal}
-        onClose={() => setShowBonusModal(false)}
-        onAcceptBonus={handleAcceptBonus}
-        onDeclineBonus={handleDeclineBonus}
-      />
-    </>
+    </div>
   )
 }
