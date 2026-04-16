@@ -533,6 +533,9 @@ export default function ClientProductPage({
             {/* Panel Calculator - FR only */}
             {isFrenchVersion && isFlexibleAcousticPanel && <PanelCalculatorFr />}
 
+            {/* Product Description Section (Galerie) - Only for Flexible Acoustic Panel */}
+            {isFlexibleAcousticPanel && <ProductDescriptionSection />}
+
             {/* Acoustic Line Section - Only for Flexible Acoustic Panel */}
             {isFlexibleAcousticPanel && (
               <div id="acoustic-line-section" className="scroll-mt-4">
@@ -624,9 +627,6 @@ export default function ClientProductPage({
             {isFlexibleAcousticPanel && <SamplesSection isFrenchVersion={isFrenchVersion} />}
           </div>
         </div>
-
-        {/* Product Description Section */}
-        {isFlexibleAcousticPanel && <ProductDescriptionSection />}
 
         {/* FAQ Section - FR only - before reviews */}
         {isFrenchVersion && isFlexibleAcousticPanel && (
