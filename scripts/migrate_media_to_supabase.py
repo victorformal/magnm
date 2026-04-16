@@ -46,6 +46,7 @@ def upload_bytes(storage_path: str, data: bytes, content_type: str):
     upload_url = f"{STORAGE_UPLOAD}/{encoded_path}"
     headers = {
         "Authorization": f"Bearer {SERVICE_KEY}",
+        "apikey": SERVICE_KEY,
         "Content-Type": content_type,
         "x-upsert": "true",
     }
