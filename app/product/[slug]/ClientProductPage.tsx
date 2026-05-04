@@ -23,7 +23,7 @@ import { AcousticLineSection } from "@/components/acoustic-line-section"
 import { CountdownTimerFr } from "@/components/countdown-timer-fr"
 import { ExitIntentPopupFr } from "@/components/exit-intent-popup-fr"
 
-import { ExitIntentPopup } from "@/components/exit-intent-popup"
+
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { PanelCalculatorFr } from "@/components/panel-calculator-fr"
@@ -202,17 +202,7 @@ export default function ClientProductPage({
         />
       )}
 
-      {/* Exit intent popup — EN Flexible Acoustic Panel only */}
-      {!isFrenchVersion && isFlexibleAcousticPanel && (
-        <ExitIntentPopup
-          onConfirm={() => {
-            const btn = document.querySelector("[data-add-to-cart]") as HTMLButtonElement
-            if (btn) {
-              btn.scrollIntoView({ behavior: "smooth" })
-            }
-          }}
-        />
-      )}
+
 
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 overflow-hidden w-full">
         {/* Breadcrumb */}
