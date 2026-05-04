@@ -140,7 +140,7 @@ export default function CartPage() {
           <h1 className="mt-4 font-serif text-4xl">{t.yourCart}</h1>
         </div>
 
-        {hasFlexiblePanel && (
+        {hasFlexiblePanel && !isEnglishMarket && (
           <div className="mb-8 flex items-center gap-3 rounded-md bg-amber-50 border border-amber-200 px-4 py-3">
             <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
             <div>
