@@ -7,6 +7,7 @@ import { CartItem } from "@/components/cart-item"
 import { Button } from "@/components/ui/button"
 import { PaymentRequestButton } from "@/components/payment-request-button"
 import { StripeCheckoutFr } from "@/components/stripe-checkout-fr"
+import { StripeCheckoutEn } from "@/components/stripe-checkout-en"
 import { formatPrice } from "@/lib/price"
 import { trackInitiateCheckout, generateEventId } from "@/lib/meta-pixel"
 import { getFbpFbc } from "@/lib/fbp-fbc"
@@ -16,18 +17,56 @@ import { BonusProgressBar } from "@/components/bonus-progress-bar"
 export default function CartPage() {
   const { items, totalPrice, clearCart } = useCart()
 
-  const hasFlexiblePanel = items.some((item) => item.product.slug === "flexible-acoustic-panel-fr")
-  
-  // Check if cart has products with mixed currencies (should never happen, but validate)
+  // Detect language based on product currency
   const currencies = items.map((item) => item.product.currency || "EUR")
   const uniqueCurrencies = [...new Set(currencies)]
   const hasMixedCurrencies = uniqueCurrencies.length > 1
+  
+  // If any product is GBP, treat as English market
+  const isEnglishMarket = currencies.some((c) => c === "GBP")
+  const currencyCode = isEnglishMarket ? "GBP" : "EUR"
 
-  // All products should be EUR for French market
-  const currencyCode = "EUR"
+  const hasFlexiblePanel = items.some((item) => 
+    item.product.slug === "flexible-acoustic-panel-fr" || 
+    item.product.slug === "flexible-acoustic-panel"
+  )
 
   // Format prices using utility function to avoid floating point errors
   const formattedTotal = formatPrice(totalPrice, currencyCode)
+
+  // Translations
+  const t = {
+    emptyTitle: isEnglishMarket ? "Your cart is empty" : "Votre panier est vide",
+    emptyDescription: isEnglishMarket 
+      ? "It looks like you haven't added any items to your cart yet."
+      : "Il semble que vous n'ayez pas encore ajoute d'articles a votre panier.",
+    continueShopping: isEnglishMarket ? "Continue Shopping" : "Continuer les achats",
+    yourCart: isEnglishMarket ? "Your Cart" : "Votre Panier",
+    clearCart: isEnglishMarket ? "Clear Cart" : "Vider le Panier",
+    orderSummary: isEnglishMarket ? "Order Summary" : "Resume de la Commande",
+    subtotal: isEnglishMarket ? "Subtotal" : "Sous-total",
+    shipping: isEnglishMarket ? "Shipping" : "Livraison",
+    shippingCalc: isEnglishMarket ? "Calculated at checkout" : "Calcule a la caisse",
+    tax: isEnglishMarket ? "Tax" : "TVA",
+    taxCalc: isEnglishMarket ? "Calculated at checkout" : "Calcule a la caisse",
+    total: isEnglishMarket ? "Total" : "Total",
+    or: isEnglishMarket ? "Or" : "Ou",
+    securePayment: isEnglishMarket ? "Secure payment by Stripe" : "Paiement securise par Stripe",
+    urgencyTitle: isEnglishMarket 
+      ? "Items in your cart are selling fast!"
+      : "Les articles dans votre panier se vendent vite !",
+    urgencyDescription: isEnglishMarket
+      ? "Only 30 units of Flexible Acoustic Panel remaining. Complete your order now."
+      : "Seulement 30 unites de Panneau Acoustique Flexible restantes. Finalisez votre commande maintenant.",
+    mixedCurrencyTitle: isEnglishMarket ? "Invalid cart" : "Panier invalide",
+    mixedCurrencyDescription: isEnglishMarket
+      ? "Your cart contains products from different markets. Please clear your cart and select products from the same market."
+      : "Votre panier contient des produits de differents marches. Veuillez vider votre panier et selectionner des produits du meme marche.",
+    mixedCurrencyCheckout: isEnglishMarket 
+      ? "Please clear your cart to proceed with payment"
+      : "Veuillez vider votre panier pour proceder au paiement",
+    paymentError: isEnglishMarket ? "Payment failed" : "Echec du paiement",
+  }
 
   const handleInitiateCheckout = () => {
     const eventId = generateEventId("ic")
@@ -72,11 +111,11 @@ export default function CartPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-md text-center">
             <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h1 className="mt-6 font-serif text-3xl">Votre panier est vide</h1>
-            <p className="mt-4 text-muted-foreground">{"Il semble que vous n'ayez pas encore ajoute d'articles a votre panier."}</p>
+            <h1 className="mt-6 font-serif text-3xl">{t.emptyTitle}</h1>
+            <p className="mt-4 text-muted-foreground">{t.emptyDescription}</p>
             <Button asChild className="mt-8" size="lg">
               <Link href="/products">
-                Continuer les achats
+                {t.continueShopping}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -96,19 +135,17 @@ export default function CartPage() {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
-            Continuer les achats
+            {t.continueShopping}
           </Link>
-          <h1 className="mt-4 font-serif text-4xl">Votre Panier</h1>
+          <h1 className="mt-4 font-serif text-4xl">{t.yourCart}</h1>
         </div>
 
         {hasFlexiblePanel && (
           <div className="mb-8 flex items-center gap-3 rounded-md bg-amber-50 border border-amber-200 px-4 py-3">
             <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">Les articles dans votre panier se vendent vite !</p>
-              <p className="text-xs text-amber-700">
-                Seulement 30 unites de Panneau Acoustique Flexible restantes. Finalisez votre commande maintenant.
-              </p>
+              <p className="text-sm font-semibold text-amber-800">{t.urgencyTitle}</p>
+              <p className="text-xs text-amber-700">{t.urgencyDescription}</p>
             </div>
           </div>
         )}
@@ -117,16 +154,14 @@ export default function CartPage() {
           <div className="mb-8 flex items-center gap-3 rounded-md bg-red-50 border border-red-200 px-4 py-3">
             <AlertTriangle className="h-5 w-5 text-red-600 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-red-800">Panier invalide</p>
-              <p className="text-xs text-red-700">
-                Votre panier contient des produits de differents marches. Veuillez vider votre panier et selectionner des produits du meme marche.
-              </p>
+              <p className="text-sm font-semibold text-red-800">{t.mixedCurrencyTitle}</p>
+              <p className="text-xs text-red-700">{t.mixedCurrencyDescription}</p>
             </div>
           </div>
         )}
 
-        {/* Bonus Progress Bar - Unlock at €100 */}
-        <BonusProgressBar currentTotal={totalPrice} threshold={100} className="mb-8" />
+        {/* Bonus Progress Bar - Unlock at €100 (only for French market) */}
+        {!isEnglishMarket && <BonusProgressBar currentTotal={totalPrice} threshold={100} className="mb-8" />}
 
         <div className="grid gap-12 lg:grid-cols-3">
           {/* Cart Items */}
@@ -140,7 +175,7 @@ export default function CartPage() {
             {/* Clear Cart */}
             <div className="mt-6">
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={clearCart}>
-                Vider le Panier
+                {t.clearCart}
               </Button>
             </div>
           </div>
@@ -148,26 +183,26 @@ export default function CartPage() {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 bg-secondary p-6">
-              <h2 className="font-serif text-xl">Resume de la Commande</h2>
+              <h2 className="font-serif text-xl">{t.orderSummary}</h2>
 
               <div className="mt-6 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Sous-total</span>
+                  <span className="text-muted-foreground">{t.subtotal}</span>
                   <span>{formatPrice(totalPrice, currencyCode)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Livraison</span>
-                  <span>Calcule a la caisse</span>
+                  <span className="text-muted-foreground">{t.shipping}</span>
+                  <span>{t.shippingCalc}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">TVA</span>
-                  <span>Calcule a la caisse</span>
+                  <span className="text-muted-foreground">{t.tax}</span>
+                  <span>{t.taxCalc}</span>
                 </div>
               </div>
 
               <div className="mt-6 border-t border-border pt-6">
                 <div className="flex justify-between">
-                  <span className="font-medium">Total</span>
+                  <span className="font-medium">{t.total}</span>
                   <span className="font-serif text-xl">{formattedTotal}</span>
                 </div>
               </div>
@@ -182,11 +217,14 @@ export default function CartPage() {
                   currency={currencyCode}
                   onSuccess={(paymentIntent) => {
                     console.log("[v0] Payment success:", paymentIntent)
-                    window.location.href = `/succes-fr?session_id=${paymentIntent.id}`
+                    const successUrl = isEnglishMarket 
+                      ? `/thank-you?session_id=${paymentIntent.id}`
+                      : `/succes-fr?session_id=${paymentIntent.id}`
+                    window.location.href = successUrl
                   }}
                   onError={(error) => {
                     console.error("[v0] Payment error:", error)
-                    alert(`Echec du paiement: ${error}`)
+                    alert(`${t.paymentError}: ${error}`)
                   }}
                 />
 
@@ -195,20 +233,22 @@ export default function CartPage() {
                     <div className="w-full border-t border-border"></div>
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-secondary px-2 text-muted-foreground">Ou</span>
+                    <span className="bg-secondary px-2 text-muted-foreground">{t.or}</span>
                   </div>
                 </div>
 
                 {hasMixedCurrencies ? (
                   <div className="text-center text-sm text-red-600 font-semibold p-4 bg-red-50 rounded">
-                    Veuillez vider votre panier pour proceder au paiement
+                    {t.mixedCurrencyCheckout}
                   </div>
+                ) : isEnglishMarket ? (
+                  <StripeCheckoutEn items={items} onInitiateCheckout={handleInitiateCheckout} />
                 ) : (
                   <StripeCheckoutFr items={items} onInitiateCheckout={handleInitiateCheckout} />
                 )}
               </div>
 
-              <p className="mt-4 text-center text-xs text-muted-foreground">Paiement securise par Stripe</p>
+              <p className="mt-4 text-center text-xs text-muted-foreground">{t.securePayment}</p>
             </div>
           </div>
         </div>
