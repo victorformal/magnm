@@ -306,68 +306,139 @@ export function AddToCartButton({ product, variant = "default", className, isFre
     )
   }
 
-  // English Flexible Acoustic Panel version: upsell quantity selector + orange CTA button
+  // English Flexible Acoustic Panel version: simple quantity selector + Add to Cart + Buy Now
   if (isEnglishFlexibleAcoustic) {
+    const unitPrice = product.salePrice || product.price
+    const totalPrice = unitPrice * quantity
+
+    const handleAddToCartOnly = () => {
+      // Check if cart has products with different currency
+      const cartHasProducts = items.length > 0
+      if (cartHasProducts) {
+        const existingProduct = items[0]?.product
+        const existingCurrency = existingProduct?.currency
+        const newProductCurrency = product.currency
+
+        if (existingCurrency !== newProductCurrency) {
+          alert(`Cannot mix products from different markets. Please clear your cart and try again.`)
+          return
+        }
+      }
+
+      const eventId = generateEventId("atc")
+      const currency = "GBP"
+
+      // Track Meta
+      trackAddToCart({
+        contentId: product.id,
+        contentName: product.name,
+        quantity: quantity,
+        value: totalPrice,
+        currency: currency,
+        eventId,
+      })
+
+      // Track TikTok
+      trackTikTokAddToCart({
+        contents: [
+          {
+            content_id: product.id,
+            content_type: 'product',
+            content_name: product.name,
+            content_category: product.category,
+            price: unitPrice,
+            num_items: quantity,
+            brand: 'Acoustic Design',
+          }
+        ],
+        value: totalPrice,
+        currency: currency,
+        description: product.name,
+      })
+
+      // Send CAPI event
+      const { fbp, fbc } = getFbpFbc()
+      const utms = getStoredUTMs()
+
+      fetch("/api/meta/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventName: "AddToCart",
+          eventId,
+          pageUrl: window.location.href,
+          customData: {
+            content_ids: [product.id],
+            contents: [{ id: product.id, quantity: quantity, item_price: unitPrice }],
+            content_name: product.name,
+            content_type: "product",
+            value: totalPrice,
+            currency: currency,
+            ...utms,
+          },
+          fbp,
+          fbc,
+        }),
+      }).catch(console.error)
+
+      // Add to cart without redirecting
+      addItem(product, quantity)
+    }
+
+    const handleBuyNowEn = () => {
+      handleAddToCartOnly()
+      router.push("/cart")
+    }
+
     return (
-      <div className="flex flex-col gap-3 w-full">
-        {/* Quantity upsell cards */}
-        <div className="space-y-2">
-          {enQuantities.map((option) => {
-            const isSelected = selectedQtyOptionEn.qty === option.qty
-            return (
-              <button
-                key={option.qty}
-                type="button"
-                onClick={() => setSelectedQtyOptionEn(option)}
-                className={`w-full rounded-lg border-2 px-4 py-3 transition-all ${
-                  isSelected
-                    ? "border-[#FF6B00] bg-orange-50"
-                    : "border-gray-200 bg-white hover:border-gray-300"
-                }`}
-              >
-                <div className="flex items-center justify-between gap-3 mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-gray-900">{option.label}</span>
-                    {option.badge && (
-                      <span className={`text-white text-[10px] font-bold px-2.5 py-1 rounded-full ${
-                        option.badge === "Most Popular" ? "bg-green-600" : "bg-amber-600"
-                      }`}>
-                        {option.badge}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-sm font-bold text-gray-900">£{option.price.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  {option.savings ? (
-                    <span className="text-green-700 font-medium">Save {option.savings}</span>
-                  ) : (
-                    <span></span>
-                  )}
-                  {option.freeShipping && (
-                    <span className="text-green-700 font-medium">Free shipping included!</span>
-                  )}
-                </div>
-              </button>
-            )
-          })}
+      <div className="flex flex-col gap-4 w-full items-center">
+        {/* Simple quantity selector */}
+        <div className="flex items-center border border-gray-300 rounded-full overflow-hidden bg-white">
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            className="flex h-12 w-14 items-center justify-center transition-colors hover:bg-gray-100"
+            aria-label="Decrease quantity"
+          >
+            <Minus className="h-4 w-4 text-gray-600" />
+          </button>
+          <span className="w-12 text-center text-lg font-semibold text-gray-900">{quantity}</span>
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => q + 1)}
+            className="flex h-12 w-14 items-center justify-center transition-colors hover:bg-gray-100"
+            aria-label="Increase quantity"
+          >
+            <Plus className="h-4 w-4 text-gray-600" />
+          </button>
         </div>
 
-        {/* Orange CTA button */}
+        {/* Add to Cart button - outlined style */}
         <button
           type="button"
           disabled={!product.inStock}
-          onClick={() => handleBuyNow()}
-          data-add-to-cart="true"
-          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleAddToCartOnly}
+          className="w-full flex items-center justify-center gap-2 rounded-full border-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium text-base py-3.5 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-          Order Now £{selectedQtyOptionEn.price.toFixed(2)}
+          Add to Cart
         </button>
 
-        {/* Reassurance line */}
-        <p className="text-center text-xs text-gray-500">
-          100% Secure Payment &nbsp;|&nbsp; Free Shipping Over £80
+        {/* Buy Now button - orange CTA */}
+        <button
+          type="button"
+          disabled={!product.inStock}
+          onClick={handleBuyNowEn}
+          data-add-to-cart="true"
+          className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FF6B00] hover:bg-[#e05e00] text-white font-medium text-base py-4 px-8 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ShoppingCart className="h-5 w-5 flex-shrink-0" />
+          Buy Now - £{totalPrice.toFixed(2)}
+        </button>
+
+        {/* Dispatch info */}
+        <p className="text-center text-sm text-gray-500">
+          Dispatch within 24-48h • Estimated delivery 5-8 business days
         </p>
       </div>
     )

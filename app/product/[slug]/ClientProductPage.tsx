@@ -22,7 +22,7 @@ import { SamplesSection } from "@/components/samples-section"
 import { AcousticLineSection } from "@/components/acoustic-line-section"
 import { CountdownTimerFr } from "@/components/countdown-timer-fr"
 import { ExitIntentPopupFr } from "@/components/exit-intent-popup-fr"
-import { CountdownTimer } from "@/components/countdown-timer"
+
 import { ExitIntentPopup } from "@/components/exit-intent-popup"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
@@ -444,18 +444,12 @@ export default function ClientProductPage({
 
             {/* Add to Cart */}
             <div className="mt-8 flex flex-col gap-3">
-              {!isFrenchVersion && isFlexibleAcousticPanel && <CountdownTimer />}
               <AddToCartButton 
                 product={product} 
                 isFrenchVersion={isFrenchVersion} 
                 isEnglishFlexibleAcoustic={!isFrenchVersion && isFlexibleAcousticPanel}
                 onAddedToCart={isFrenchVersion ? handleFrAddedToCart : undefined}
               />
-              {!isFrenchVersion && isFlexibleAcousticPanel && (
-                <p className="text-center text-xs text-muted-foreground">
-                  Dispatch within 24-48h • Estimated delivery 5-8 business days
-                </p>
-              )}
             </div>
 
             {/* Trust Badges */}
