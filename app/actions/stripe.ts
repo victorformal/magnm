@@ -144,6 +144,7 @@ export async function createCheckoutSession(items: CartItem[], origin: string, t
       ui_mode: "embedded",
       line_items: lineItems,
       mode: "payment",
+      locale: "en",
 
       // ✅ Coleta telefone no checkout (melhora match quality)
       phone_number_collection: { enabled: true },
@@ -151,37 +152,7 @@ export async function createCheckoutSession(items: CartItem[], origin: string, t
       return_url: `${origin}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
 
       shipping_address_collection: {
-        allowed_countries: [
-          "GB",
-          "IE",
-          "GI",
-          "AT",
-          "BE",
-          "BG",
-          "HR",
-          "CY",
-          "CZ",
-          "DK",
-          "EE",
-          "FI",
-          "FR",
-          "DE",
-          "GR",
-          "HU",
-          "IT",
-          "LV",
-          "LT",
-          "LU",
-          "MT",
-          "NL",
-          "PL",
-          "PT",
-          "RO",
-          "SK",
-          "SI",
-          "ES",
-          "SE",
-        ],
+        allowed_countries: ["GB", "IE"],
       },
 
       metadata: {
